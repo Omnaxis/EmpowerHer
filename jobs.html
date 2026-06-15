@@ -4,198 +4,557 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Find Work | EmpowerHer</title>
+    <meta name="description" content="Browse safe, flexible work opportunities perfect for homemakers. Find jobs that fit your schedule.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* --- REUSING YOUR THEME --- */
         :root {
-            --primary: #2A9D8F; 
-            --secondary: #E76F51; 
-            --accent: #E9C46A; 
-            --bg: #FDFCF5; 
-            --text: #264653; 
+            --primary: #2A9D8F;
+            --primary-light: #e0f2f1;
+            --primary-dark: #1f7a6f;
+            --secondary: #E76F51;
+            --accent: #E9C46A;
+            --pink: #F4A0C4;
+            --pink-light: #fce4f0;
+            --lavender: #E8D5F5;
+            --bg: #FDF8F4;
+            --text: #264653;
+            --text-light: #5a7a8a;
             --white: #ffffff;
-            --shadow: 0 4px 15px rgba(0,0,0,0.05);
+            --shadow: 0 4px 20px rgba(42, 157, 143, 0.08);
+            --shadow-hover: 0 8px 30px rgba(42, 157, 143, 0.15);
             --success: #28a745;
+            --radius: 18px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body { background-color: var(--bg); color: var(--text); line-height: 1.6; }
+        body {
+            font-family: 'Nunito', 'Segoe UI', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            font-size: 18px;
+            line-height: 1.7;
+        }
+
         a { text-decoration: none; color: inherit; }
 
-        /* --- NAV (Consistent) --- */
-        nav {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 1.5rem 5%; background: var(--white); box-shadow: var(--shadow);
-            position: sticky; top: 0; z-index: 1000;
+        /* ═══════ ANIMATIONS ═══════ */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(25px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
-        .nav-links { display: flex; gap: 2rem; align-items: center; }
-        .nav-links a:hover { color: var(--secondary); }
-        .btn-primary {
-            background-color: var(--secondary); color: var(--white);
-            padding: 0.6rem 1.5rem; border-radius: 50px; font-weight: 600;
-        }
-        .btn-logout {
-            background: none; border: 1px solid #ccc; padding: 0.4rem 1rem;
-            border-radius: 50px; cursor: pointer; font-size: 0.85rem; color: #666; transition: 0.3s;
-        }
-        .btn-logout:hover { border-color: var(--secondary); color: var(--secondary); }
 
-        /* --- FILTERS SECTION --- */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes confetti {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* ═══════ NAVIGATION ═══════ */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background: var(--white);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            font-weight: 600;
+            font-size: 1rem;
+            transition: var(--transition);
+            padding: 0.6rem 1.2rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-links a:hover { color: var(--secondary); background: #fff5f2; }
+
+        .nav-links a.active-link {
+            color: var(--secondary);
+            background: #fff5f2;
+            font-weight: 700;
+        }
+
+        .btn-logout {
+            background: none;
+            border: 2px solid #e0e0e0;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-light);
+            transition: var(--transition);
+            font-family: inherit;
+            min-height: 44px;
+        }
+
+        .btn-logout:hover { border-color: var(--secondary); color: var(--secondary); background: #fff5f2; }
+
+        /* ═══════ HAMBURGER ═══════ */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px;
+            border: none;
+            background: none;
+            z-index: 1100;
+        }
+
+        .hamburger span {
+            width: 28px;
+            height: 3px;
+            background: var(--text);
+            border-radius: 3px;
+            transition: var(--transition);
+        }
+
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.98);
+            z-index: 1050;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .mobile-menu.open { display: flex; animation: fadeIn 0.3s ease; }
+
+        .mobile-menu a {
+            font-size: 1.3rem;
+            font-weight: 700;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text);
+        }
+
+        /* ═══════ SEARCH / HERO ═══════ */
         .search-container {
-            background: linear-gradient(135deg, var(--primary) 0%, #218c7e 100%);
-            padding: 3rem 5%;
+            background: linear-gradient(135deg, var(--primary) 0%, #1a8a7d 100%);
+            padding: 3.5rem 5%;
             text-align: center;
             color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .search-container::before {
+            content: '';
+            position: absolute;
+            top: -80px;
+            right: -80px;
+            width: 250px;
+            height: 250px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 50%;
+        }
+
+        .search-container h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .search-container p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .search-hint {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
         }
 
         .search-bar {
-            margin-top: 1.5rem;
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
+            margin-top: 1rem;
         }
 
         .filter-select {
-            padding: 12px;
+            padding: 14px 20px;
             border-radius: 50px;
-            border: none;
+            border: 2px solid rgba(255,255,255,0.3);
             outline: none;
-            min-width: 150px;
+            min-width: 180px;
             cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            background: var(--white);
+            color: var(--text);
+            transition: var(--transition);
+            min-height: 52px;
         }
 
-        /* --- JOB LISTINGS --- */
-        .container { padding: 3rem 5%; }
-        
-        .section-header { margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .filter-select:focus { border-color: var(--accent); }
+
+        .btn-search {
+            background: linear-gradient(135deg, var(--secondary) 0%, #e8845e 100%);
+            color: var(--white);
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: inherit;
+            min-height: 52px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-search:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(231, 111, 81, 0.35);
+        }
+
+        /* ═══════ JOB LISTINGS ═══════ */
+        .container {
+            padding: 3rem 5%;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-header h2 {
+            font-size: 1.6rem;
+            font-weight: 800;
+        }
+
+        .job-count-badge {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
 
         .job-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
             gap: 2rem;
         }
 
         .job-card {
             background: var(--white);
-            border-radius: 15px;
-            padding: 1.5rem;
+            border-radius: var(--radius);
+            padding: 1.8rem;
             box-shadow: var(--shadow);
-            border-top: 5px solid var(--accent);
-            transition: transform 0.2s;
+            border-left: 5px solid var(--accent);
+            transition: var(--transition);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            animation: fadeInUp 0.5s ease-out both;
         }
 
-        .job-card:hover { transform: translateY(-5px); }
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
 
-        .card-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem; }
-        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
         .badge {
-            font-size: 0.75rem; padding: 4px 10px; border-radius: 20px;
-            font-weight: bold; text-transform: uppercase;
+            font-size: 0.8rem;
+            padding: 5px 14px;
+            border-radius: 50px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+
         .badge.cooking { background: #ffe3e3; color: #d63031; }
         .badge.teaching { background: #e3f2fd; color: #0984e3; }
         .badge.craft { background: #fff3cd; color: #856404; }
-        .badge.data { background: #e2e6ea; color: #2d3436; }
+        .badge.data { background: var(--lavender); color: #6c3483; }
 
-        .job-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; }
-        .job-pay { color: var(--success); font-weight: 700; font-size: 1.1rem; }
-        
+        .card-emoji {
+            font-size: 2rem;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f9f9f9;
+            border-radius: 12px;
+        }
+
+        .job-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin-bottom: 0.4rem;
+        }
+
+        .job-pay {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            font-weight: 800;
+            font-size: 1.05rem;
+            padding: 4px 14px;
+            border-radius: 50px;
+        }
+
+        .job-description {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-top: 8px;
+        }
+
         .job-details {
             margin: 1rem 0;
-            font-size: 0.9rem;
-            color: #666;
-            border-top: 1px solid #eee;
-            border-bottom: 1px solid #eee;
-            padding: 10px 0;
+            font-size: 0.95rem;
+            color: var(--text-light);
+            border-top: 1px solid #f0f0f0;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 12px 0;
         }
 
-        .detail-item { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+            font-size: 0.95rem;
+        }
+
+        .detail-icon {
+            font-size: 1.1rem;
+            width: 24px;
+            text-align: center;
+        }
 
         .btn-apply {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary) 0%, #3bc4b4 100%);
             color: white;
             text-align: center;
-            padding: 10px;
-            border-radius: 8px;
+            padding: 13px;
+            border-radius: 14px;
             margin-top: auto;
             cursor: pointer;
-            transition: 0.3s;
+            transition: var(--transition);
             border: none;
-            font-size: 1rem;
-            font-weight: 600;
+            font-size: 1.05rem;
+            font-weight: 700;
+            font-family: inherit;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
-        .btn-apply:hover { background: #1f7a6f; }
-        .btn-apply:disabled { background: #999; cursor: not-allowed; }
-        .btn-apply.applied { background: var(--success); cursor: default; }
 
-        /* Toast notification */
-        .toast {
-            position: fixed; bottom: 30px; right: 30px; background: var(--text);
-            color: white; padding: 15px 25px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            z-index: 9999; display: none; animation: slideUp 0.3s ease;
+        .btn-apply:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(42, 157, 143, 0.3);
         }
+
+        .btn-apply:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-apply.applied {
+            background: linear-gradient(135deg, var(--success), #34c759);
+            cursor: default;
+            animation: confetti 0.5s ease;
+        }
+
+        /* ═══════ TOAST ═══════ */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--text);
+            color: white;
+            padding: 16px 28px;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            z-index: 9999;
+            display: none;
+            animation: slideUp 0.3s ease;
+            font-weight: 600;
+            font-size: 1rem;
+            max-width: 360px;
+        }
+
         .toast.success { background: var(--success); }
         .toast.error { background: #d63031; }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        .loading-text { text-align: center; padding: 3rem; color: #999; font-size: 1.1rem; }
+        .loading-text {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
 
-        /* --- RESPONSIVE --- */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-state-emoji {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .empty-state h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            color: var(--text-light);
+        }
+
+        /* ═══════ RESPONSIVE ═══════ */
         @media (max-width: 768px) {
+            body { font-size: 16px; }
             .nav-links { display: none; }
+            .hamburger { display: flex; }
+            .search-container h1 { font-size: 1.7rem; }
+            .search-bar { flex-direction: column; align-items: center; }
+            .filter-select { width: 100%; max-width: 300px; }
+            .btn-search { width: 100%; max-width: 300px; justify-content: center; }
             .section-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .job-grid { grid-template-columns: 1fr; }
+            .toast { left: 20px; right: 20px; bottom: 20px; text-align: center; }
         }
     </style>
 </head>
 <body>
 
     <nav>
-        <div class="logo">EmpowerHer</div>
+        <div class="logo">🌸 EmpowerHer</div>
         <div class="nav-links">
-            <a href="dashboard.html">Home</a>
-            <a href="#" style="color: var(--secondary); font-weight: bold;">Find Work</a>
-            <a href="community.html">Community</a>
+            <a href="dashboard.html">🏠 Home</a>
+            <a href="#" class="active-link">💼 Find Work</a>
+            <a href="community.html">👩‍👩‍👧 Community</a>
             <button class="btn-logout" id="logout-btn" onclick="logout()" style="display:none;">Logout</button>
         </div>
-        
+        <button class="hamburger" id="hamburger-btn" onclick="toggleMenu()" aria-label="Open Menu">
+            <span></span><span></span><span></span>
+        </button>
     </nav>
 
+    <div class="mobile-menu" id="mobile-menu">
+        <a href="dashboard.html">🏠 Home</a>
+        <a href="jobs.html">💼 Find Work</a>
+        <a href="learn.html">📖 Learn Skills</a>
+        <a href="community.html">👩‍👩‍👧 Community</a>
+        <button class="btn-logout" id="mobile-logout-btn" onclick="logout()" style="display:none;">🚪 Logout</button>
+    </div>
+
     <section class="search-container">
-        <h1>Find work that fits your schedule</h1>
-        <p id="job-total-hero">Loading jobs...</p>
-        
+        <h1>Find work that fits your day 💼</h1>
+        <p id="job-total-hero">Loading jobs for you...</p>
+        <div class="search-hint">🔍 Pick your skill and we'll show the best matches</div>
+
         <div class="search-bar">
-            <select class="filter-select" id="filter-skill">
-                <option>Select Skill</option>
+            <select class="filter-select" id="filter-skill" aria-label="Select your skill">
+                <option>🎯 Select Skill</option>
                 <option>Cooking</option>
                 <option>Teaching</option>
                 <option>Stitching</option>
                 <option>Art & Craft</option>
                 <option>Data Entry</option>
             </select>
-            <select class="filter-select" id="filter-time">
-                <option>Time Available</option>
+            <select class="filter-select" id="filter-time" aria-label="Select time available">
+                <option>⏰ Time Available</option>
                 <option>1 Hour</option>
                 <option>2-4 Hours</option>
                 <option>Full Day</option>
             </select>
-            <button class="btn-primary" style="border:none; cursor:pointer;" onclick="loadJobs()">Search Jobs</button>
+            <button class="btn-search" onclick="loadJobs()">🔍 Search Jobs</button>
         </div>
     </section>
 
     <div class="container">
         <div class="section-header">
-            <h2>Recent Opportunities</h2>
-            <span id="job-count" style="color: #666;">Loading...</span>
+            <h2>Recent Opportunities ✨</h2>
+            <span class="job-count-badge" id="job-count">Loading...</span>
         </div>
 
         <div class="job-grid" id="job-grid">
-            <div class="loading-text">Loading jobs...</div>
+            <div class="loading-text">⏳ Finding the best jobs for you...</div>
         </div>
     </div>
 
@@ -205,9 +564,17 @@
     const API_BASE = window.location.origin;
     const token = localStorage.getItem('empowerher_token');
 
-    // Show logout if logged in
     if (token) {
         document.getElementById('logout-btn').style.display = 'inline-block';
+        const mobileLogout = document.getElementById('mobile-logout-btn');
+        if (mobileLogout) mobileLogout.style.display = 'inline-block';
+    }
+
+    function toggleMenu() {
+        const menu = document.getElementById('mobile-menu');
+        const btn = document.getElementById('hamburger-btn');
+        menu.classList.toggle('open');
+        btn.classList.toggle('active');
     }
 
     function logout() {
@@ -218,10 +585,10 @@
 
     function showToast(message, type = 'success') {
         const toast = document.getElementById('toast');
-        toast.textContent = message;
+        toast.textContent = (type === 'success' ? '✅ ' : '⚠️ ') + message;
         toast.className = 'toast ' + type;
         toast.style.display = 'block';
-        setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        setTimeout(() => { toast.style.display = 'none'; }, 3500);
     }
 
     function getBadgeClass(category) {
@@ -240,45 +607,57 @@
         const time = document.getElementById('filter-time').value;
 
         let url = `${API_BASE}/api/jobs?`;
-        if (skill !== 'Select Skill') url += `skill=${encodeURIComponent(skill)}&`;
-        if (time !== 'Time Available') url += `time=${encodeURIComponent(time)}&`;
+        if (!skill.startsWith('🎯')) url += `skill=${encodeURIComponent(skill)}&`;
+        if (!time.startsWith('⏰')) url += `time=${encodeURIComponent(time)}&`;
 
         try {
             const res = await fetch(url);
             const data = await res.json();
 
             document.getElementById('job-count').textContent = `Showing ${data.total} Jobs`;
-            document.getElementById('job-total-hero').textContent = `${data.total}+ Verified jobs available today`;
+            document.getElementById('job-total-hero').textContent = `${data.total}+ verified jobs available today 🎉`;
 
             const grid = document.getElementById('job-grid');
 
             if (data.jobs.length === 0) {
-                grid.innerHTML = '<div class="loading-text">No jobs found matching your filters. Try different criteria.</div>';
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <span class="empty-state-emoji">🔍</span>
+                        <h3>No jobs found right now</h3>
+                        <p>Try selecting a different skill or time — new jobs come every day!</p>
+                    </div>
+                `;
                 return;
             }
 
-            grid.innerHTML = data.jobs.map(job => `
-                <div class="job-card">
+            grid.innerHTML = data.jobs.map((job, i) => `
+                <div class="job-card" style="animation-delay: ${i * 0.1}s">
                     <div class="card-header">
                         <span class="badge ${getBadgeClass(job.category)}">${job.category}</span>
-                        <span style="font-size:1.5rem;">${job.icon}</span>
+                        <div class="card-emoji">${job.icon}</div>
                     </div>
                     <div class="job-title">${job.title}</div>
-                    <div class="job-pay">${job.pay}</div>
-                    <p style="font-size: 0.9rem; margin-top: 5px;">${job.description}</p>
+                    <div class="job-pay">💰 ${job.pay}</div>
+                    <p class="job-description">${job.description}</p>
                     
                     <div class="job-details">
-                        <div class="detail-item">⏱ <strong>Time:</strong> ${job.time}</div>
-                        <div class="detail-item">📍 <strong>Location:</strong> ${job.location}</div>
-                        <div class="detail-item">📋 <strong>Req:</strong> ${job.requirements}</div>
+                        <div class="detail-item"><span class="detail-icon">⏱️</span> <strong>Time:</strong> ${job.time}</div>
+                        <div class="detail-item"><span class="detail-icon">📍</span> <strong>Where:</strong> ${job.location}</div>
+                        <div class="detail-item"><span class="detail-icon">📋</span> <strong>Need:</strong> ${job.requirements}</div>
                     </div>
-                    <button class="btn-apply" onclick="applyToJob(${job.id}, this)" id="apply-btn-${job.id}">Apply Now</button>
+                    <button class="btn-apply" onclick="applyToJob(${job.id}, this)" id="apply-btn-${job.id}">📝 Apply Now</button>
                 </div>
             `).join('');
 
         } catch (err) {
             console.error('Load jobs error:', err);
-            document.getElementById('job-grid').innerHTML = '<div class="loading-text">Error loading jobs. Is the server running?</div>';
+            document.getElementById('job-grid').innerHTML = `
+                <div class="empty-state" style="grid-column: 1 / -1;">
+                    <span class="empty-state-emoji">😕</span>
+                    <h3>Something went wrong</h3>
+                    <p>Please check your internet connection and try again.</p>
+                </div>
+            `;
         }
     }
 
@@ -290,7 +669,7 @@
         }
 
         btn.disabled = true;
-        btn.textContent = 'Applying...';
+        btn.textContent = '⏳ Applying...';
 
         try {
             const res = await fetch(`${API_BASE}/api/jobs/${jobId}/apply`, {
@@ -304,24 +683,24 @@
 
             if (!res.ok) {
                 if (res.status === 409) {
-                    btn.textContent = '✓ Already Applied';
+                    btn.textContent = '✅ Already Applied';
                     btn.classList.add('applied');
                     showToast(data.error, 'error');
                 } else {
                     btn.disabled = false;
-                    btn.textContent = 'Apply Now';
+                    btn.textContent = '📝 Apply Now';
                     showToast(data.error, 'error');
                 }
                 return;
             }
 
-            btn.textContent = '✓ Applied!';
+            btn.textContent = '✅ Applied!';
             btn.classList.add('applied');
-            showToast(data.message, 'success');
+            showToast(data.message || 'You applied successfully! 🎉', 'success');
         } catch (err) {
             console.error('Apply error:', err);
             btn.disabled = false;
-            btn.textContent = 'Apply Now';
+            btn.textContent = '📝 Apply Now';
             showToast('Network error. Please try again.', 'error');
         }
     }

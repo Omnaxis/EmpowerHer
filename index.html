@@ -5,24 +5,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | EmpowerHer</title>
+    <meta name="description" content="Sign in or create your EmpowerHer account to start earning from home.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <!-- Google Sign-In Library -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
-        /* --- COPYING YOUR EXISTING THEME --- */
         :root {
-            --primary: #2A9D8F; /* Calming Teal */
+            --primary: #2A9D8F;
             --primary-dark: #1f7a6f;
-            --secondary: #E76F51; /* Warm Terracotta */
-            --accent: #E9C46A; /* Soft Gold */
-            --bg: #FDFCF5; /* Cream White */
-            --text: #264653; /* Dark Charcoal */
+            --primary-light: #e0f2f1;
+            --secondary: #E76F51;
+            --accent: #E9C46A;
+            --pink: #F4A0C4;
+            --pink-light: #fce4f0;
+            --lavender: #E8D5F5;
+            --bg: #FDF8F4;
+            --text: #264653;
+            --text-light: #5a7a8a;
             --white: #ffffff;
-            --shadow: 0 4px 20px rgba(0,0,0,0.1);
+            --shadow: 0 4px 20px rgba(42, 157, 143, 0.08);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
+            font-family: 'Nunito', 'Segoe UI', sans-serif;
             background-color: var(--bg);
             color: var(--text);
             min-height: 100vh;
@@ -30,58 +40,127 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
+            font-size: 18px;
+            line-height: 1.7;
         }
 
-        /* --- LOGIN CONTAINER --- */
+        /* ═══════ ANIMATIONS ═══════ */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200px 0; }
+            100% { background-position: 200px 0; }
+        }
+
+        /* ═══════ LOGIN CONTAINER ═══════ */
         .container {
             background: var(--white);
             width: 100%;
-            max-width: 900px;
-            min-height: 600px;
+            max-width: 950px;
+            min-height: 620px;
             display: flex;
-            border-radius: 20px;
-            box-shadow: var(--shadow);
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(42, 157, 143, 0.1);
             overflow: hidden;
             position: relative;
+            animation: fadeInUp 0.7s ease-out;
         }
 
-        /* --- LEFT SIDE (IMAGE/BRANDING) --- */
+        /* ═══════ LEFT SIDE (BRANDING) ═══════ */
         .brand-section {
             flex: 1;
-            background: linear-gradient(135deg, var(--primary) 0%, #218c7e 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, #1a8a7d 50%, #218c7e 100%);
             color: var(--white);
             display: flex;
             flex-direction: column;
             justify-content: center;
             padding: 3rem;
             position: relative;
+            overflow: hidden;
         }
 
-        .brand-section::after {
-            /* Decorative Circle */
+        .brand-section::before {
             content: '';
             position: absolute;
-            top: -50px;
-            left: -50px;
-            width: 200px;
-            height: 200px;
-            background: rgba(255,255,255,0.1);
+            top: -80px;
+            left: -80px;
+            width: 250px;
+            height: 250px;
+            background: rgba(255,255,255,0.06);
             border-radius: 50%;
         }
 
-        .brand-section h1 { font-size: 2.5rem; margin-bottom: 1rem; line-height: 1.2; }
-        .brand-section p { font-size: 1.1rem; opacity: 0.9; margin-bottom: 2rem; }
-        
+        .brand-section::after {
+            content: '';
+            position: absolute;
+            bottom: -60px;
+            right: -60px;
+            width: 200px;
+            height: 200px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 50%;
+        }
+
+        .brand-emoji {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .brand-section h1 {
+            font-size: 2.3rem;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+            font-weight: 800;
+        }
+
+        .brand-section p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
         .testimonial {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.12);
             padding: 1.5rem;
-            border-radius: 12px;
+            border-radius: 16px;
             border-left: 4px solid var(--accent);
             font-style: italic;
             margin-top: auto;
+            backdrop-filter: blur(4px);
         }
 
-        /* --- RIGHT SIDE (FORM) --- */
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 12px;
+            font-style: normal;
+        }
+
+        .testimonial-avatar {
+            width: 36px;
+            height: 36px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        /* ═══════ RIGHT SIDE (FORM) ═══════ */
         .form-section {
             flex: 1;
             padding: 3rem;
@@ -92,155 +171,260 @@
 
         .logo-text {
             color: var(--primary);
-            font-weight: 700;
+            font-weight: 800;
             font-size: 1.5rem;
-            margin-bottom: 2rem;
-            display: inline-block;
+            margin-bottom: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             text-decoration: none;
         }
 
-        /* --- TABS --- */
+        .form-welcome {
+            color: var(--text-light);
+            font-size: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* ═══════ TABS ═══════ */
         .tabs {
             display: flex;
-            gap: 1.5rem;
+            gap: 0;
             margin-bottom: 2rem;
-            border-bottom: 2px solid #eee;
+            background: #f5f5f5;
+            border-radius: 14px;
+            padding: 4px;
         }
 
         .tab {
-            padding-bottom: 0.5rem;
+            flex: 1;
+            padding: 0.7rem;
             cursor: pointer;
-            font-weight: 600;
-            color: #999;
-            transition: 0.3s;
-            border-bottom: 3px solid transparent;
+            font-weight: 700;
+            color: var(--text-light);
+            transition: var(--transition);
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1rem;
         }
 
         .tab.active {
-            color: var(--text);
-            border-bottom: 3px solid var(--secondary);
+            color: var(--white);
+            background: var(--primary);
+            box-shadow: 0 2px 10px rgba(42, 157, 143, 0.3);
         }
 
-        /* --- INPUTS --- */
-        .form-group { margin-bottom: 1.5rem; }
-        .form-group label { display: block; font-size: 0.9rem; margin-bottom: 0.5rem; font-weight: 600; }
-        
-        .input-wrapper { position: relative; }
-        
-        input {
+        .tab:hover:not(.active) {
+            color: var(--text);
+            background: #eee;
+        }
+
+        /* ═══════ INPUTS ═══════ */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .label-icon {
+            font-size: 1.1rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        input[type="text"],
+        input[type="tel"],
+        input[type="password"] {
             width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #eee;
-            border-radius: 8px;
+            padding: 14px 18px;
+            border: 2px solid #e8e8e8;
+            border-radius: 14px;
             font-size: 1rem;
-            transition: 0.3s;
+            font-family: inherit;
+            transition: var(--transition);
             outline: none;
+            background: var(--white);
+            color: var(--text);
+            min-height: 52px;
         }
 
         input:focus {
             border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(42, 157, 143, 0.1);
         }
 
-        /* --- BUTTONS --- */
+        input::placeholder {
+            color: #b0b0b0;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 1.3rem;
+            background: none;
+            border: none;
+            padding: 4px;
+            line-height: 1;
+            color: var(--text-light);
+        }
+
+        /* ═══════ BUTTONS ═══════ */
         .btn-submit {
             width: 100%;
-            background: var(--secondary);
+            background: linear-gradient(135deg, var(--secondary) 0%, #e8845e 100%);
             color: var(--white);
-            padding: 12px;
+            padding: 14px;
             border: none;
             border-radius: 50px;
-            font-size: 1rem;
-            font-weight: 600;
+            font-size: 1.1rem;
+            font-weight: 700;
             cursor: pointer;
-            transition: 0.3s;
-            margin-top: 1rem;
-        }
-
-        .btn-submit:hover {
-            background: #d65d3f;
-            transform: translateY(-2px);
-        }
-
-        .btn-submit:disabled {
-            background: #999;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .google-btn {
-            width: 100%;
-            background: var(--white);
-            border: 2px solid #eee;
-            padding: 12px;
-            border-radius: 50px;
+            transition: var(--transition);
+            margin-top: 0.5rem;
+            font-family: inherit;
+            min-height: 54px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            cursor: pointer;
-            margin-top: 1rem;
-            color: #555;
-            font-weight: 600;
-            transition: 0.3s;
+            gap: 8px;
         }
-        
-        .google-btn:hover { border-color: #ddd; background: #fafafa; }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(231, 111, 81, 0.35);
+        }
+
+        .btn-submit:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
 
         .divider {
             text-align: center;
             margin: 1.5rem 0;
-            color: #999;
+            color: #b0b0b0;
             font-size: 0.9rem;
             position: relative;
+            font-weight: 600;
         }
-        
+
         .divider::before, .divider::after {
             content: '';
             position: absolute;
             top: 50%;
-            width: 40%;
+            width: 38%;
             height: 1px;
-            background: #eee;
+            background: #e8e8e8;
         }
         .divider::before { left: 0; }
         .divider::after { right: 0; }
 
-        /* --- ERROR / SUCCESS MESSAGES --- */
-        .message {
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-            display: none;
-        }
-        .message.error {
-            background: #ffe3e3;
-            color: #d63031;
-            border: 1px solid #ffcccc;
-            display: block;
-        }
-        .message.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            display: block;
-        }
-
-        /* --- TOGGLE LOGIC --- */
-        .signup-field { display: none; }
-        
         /* Google Sign-In container */
         #google-signin-container {
             display: flex;
             justify-content: center;
-            margin-top: 1rem;
+            margin-top: 0.5rem;
         }
 
-        /* Mobile Responsive */
+        .forgot-link {
+            display: inline-block;
+            font-size: 0.9rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .forgot-link:hover {
+            color: var(--primary-dark);
+        }
+
+        /* ═══════ MESSAGES ═══════ */
+        .message {
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            display: none;
+            font-weight: 600;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .message.error {
+            background: #ffe3e3;
+            color: #d63031;
+            border: 1px solid #ffcccc;
+            display: flex;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: flex;
+        }
+
+        /* ═══════ TOGGLE LOGIC ═══════ */
+        .signup-field { display: none; }
+
+        /* ═══════ RESPONSIVE ═══════ */
         @media (max-width: 768px) {
-            .container { flex-direction: column; min-height: auto; }
-            .brand-section { padding: 2rem; display: none; /* Hide branding on small mobile to save space */ }
+            body { font-size: 16px; padding: 12px; }
+
+            .container {
+                flex-direction: column;
+                min-height: auto;
+                border-radius: 20px;
+            }
+
+            .brand-section {
+                padding: 2rem;
+                text-align: center;
+            }
+
+            .brand-section h1 { font-size: 1.8rem; }
+
+            .testimonial { display: none; }
+
             .form-section { padding: 2rem; }
+        }
+
+        @media (max-width: 480px) {
+            .brand-section {
+                padding: 1.5rem;
+            }
+
+            .brand-section h1 {
+                font-size: 1.5rem;
+            }
+
+            .brand-section p {
+                font-size: 0.95rem;
+            }
+
+            .form-section {
+                padding: 1.5rem;
+            }
         }
     </style>
 </head>
@@ -248,50 +432,59 @@
 
 <div class="container">
     <div class="brand-section">
-        <h1>Start your journey to<br>Financial Freedom.</h1>
-        <p>Join 10,000+ housewives earning safely from home.</p>
+        <span class="brand-emoji">🌸</span>
+        <h1>Start your journey to<br>Financial Freedom</h1>
+        <p>Join 10,000+ women who are earning safely from home. It's simple, it's safe, and it's made for you! ✨</p>
         
         <div class="testimonial">
-            "The platform is so easy to use. I created my profile in 2 minutes!"
-            <br><br>
-            <small>— Meera K, Joined 2 days ago</small>
+            "I was nervous about using technology, but EmpowerHer made everything so easy. I earned my first income in just 3 days!"
+            <div class="testimonial-author">
+                <div class="testimonial-avatar">MK</div>
+                <div>
+                    <strong>Meera K.</strong><br>
+                    <small style="opacity:0.8;">Joined recently • Home Cook</small>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="form-section">
-        <a href="dashboard.html" class="logo-text">EmpowerHer</a>
+        <a href="dashboard.html" class="logo-text">🌸 EmpowerHer</a>
+        <p class="form-welcome">Welcome! Let's get you started 😊</p>
 
         <div id="form-message" class="message"></div>
 
         <div class="tabs">
-            <div class="tab active" onclick="switchTab('login')" id="tab-login">Login</div>
-            <div class="tab" onclick="switchTab('signup')" id="tab-signup">Sign Up</div>
+            <div class="tab active" onclick="switchTab('login')" id="tab-login">🔑 Login</div>
+            <div class="tab" onclick="switchTab('signup')" id="tab-signup">✨ Sign Up</div>
         </div>
 
         <form id="auth-form" onsubmit="event.preventDefault(); handleSubmit();">
             
             <div class="form-group signup-field">
-                <label>Full Name</label>
+                <label for="input-name"><span class="label-icon">👤</span> Your Full Name</label>
                 <input type="text" id="input-name" placeholder="e.g. Anita Sharma">
             </div>
 
             <div class="form-group">
-                <label>Mobile Number</label>
+                <label for="input-mobile"><span class="label-icon">📱</span> Mobile Number</label>
                 <div class="input-wrapper">
                     <input type="tel" id="input-mobile" placeholder="98765 43210" pattern="[0-9]{10}" required>
                 </div>
             </div>
 
             <div class="form-group">
-                <label id="pass-label">Password</label>
-                <input type="password" id="input-password" placeholder="Enter your password" required />
-
-                <div style="text-align: right; margin-top: 5px;">
-                    <a href="#" style="font-size: 0.8rem; color: var(--primary);">Forgot Password?</a>
+                <label id="pass-label" for="input-password"><span class="label-icon">🔒</span> Password</label>
+                <div class="input-wrapper">
+                    <input type="password" id="input-password" placeholder="Enter your password" required />
+                    <button type="button" class="password-toggle" onclick="togglePassword()" aria-label="Show Password" id="pwd-toggle">👁️</button>
+                </div>
+                <div style="text-align: right; margin-top: 8px;">
+                    <a href="#" class="forgot-link">Forgot Password?</a>
                 </div>
             </div>
 
-            <button type="submit" class="btn-submit" id="submit-btn">Login Securely</button>
+            <button type="submit" class="btn-submit" id="submit-btn">🔑 Login Securely</button>
 
             <div class="divider">OR</div>
 
@@ -345,19 +538,20 @@
             tabLogin.classList.remove('active');
             tabSignup.classList.add('active');
             signupFields.forEach(field => field.style.display = 'block');
-            passLabel.innerText = "Create Password";
-            submitBtn.innerText = "Create Account";
+            passLabel.innerHTML = '<span class="label-icon">🔒</span> Create Password';
+            submitBtn.innerHTML = '✨ Create My Account';
         } else {
             tabSignup.classList.remove('active');
             tabLogin.classList.add('active');
             signupFields.forEach(field => field.style.display = 'none');
-            passLabel.innerText = "Password";
-            submitBtn.innerText = "Login Securely";
+            passLabel.innerHTML = '<span class="label-icon">🔒</span> Password';
+            submitBtn.innerHTML = '🔑 Login Securely';
         }
     }
 
     function showMessage(text, type) {
-        formMessage.textContent = text;
+        const icon = type === 'error' ? '❌' : '✅';
+        formMessage.innerHTML = icon + ' ' + text;
         formMessage.className = 'message ' + type;
     }
 
@@ -366,14 +560,27 @@
         formMessage.textContent = '';
     }
 
+    // --- Password Toggle ---
+    function togglePassword() {
+        const pwd = document.getElementById('input-password');
+        const toggle = document.getElementById('pwd-toggle');
+        if (pwd.type === 'password') {
+            pwd.type = 'text';
+            toggle.textContent = '🙈';
+        } else {
+            pwd.type = 'password';
+            toggle.textContent = '👁️';
+        }
+    }
+
     async function handleSubmit() {
         const mobile = document.getElementById('input-mobile').value.replace(/\s/g, '');
         const password = document.getElementById('input-password').value;
 
         hideMessage();
         submitBtn.disabled = true;
-        const originalText = submitBtn.innerText;
-        submitBtn.innerText = "Processing...";
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '⏳ Please wait...';
 
         try {
             if (currentMode === 'signup') {
@@ -398,7 +605,7 @@
 
                 localStorage.setItem('empowerher_token', data.token);
                 localStorage.setItem('empowerher_user', JSON.stringify(data.user));
-                showMessage('Account created! Redirecting...', 'success');
+                showMessage('Account created! Taking you to your dashboard...', 'success');
                 setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
 
             } else {
@@ -417,15 +624,15 @@
 
                 localStorage.setItem('empowerher_token', data.token);
                 localStorage.setItem('empowerher_user', JSON.stringify(data.user));
-                showMessage('Login successful! Redirecting...', 'success');
+                showMessage('Welcome back! Taking you home...', 'success');
                 setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
             }
         } catch (err) {
             console.error('Auth error:', err);
-            showMessage('Network error. Please make sure the server is running.', 'error');
+            showMessage('Could not connect. Please check your internet and try again.', 'error');
         } finally {
             submitBtn.disabled = false;
-            submitBtn.innerText = originalText;
+            submitBtn.innerHTML = originalText;
         }
     }
 
@@ -447,7 +654,7 @@
 
             localStorage.setItem('empowerher_token', data.token);
             localStorage.setItem('empowerher_user', JSON.stringify(data.user));
-            showMessage('Google login successful! Redirecting...', 'success');
+            showMessage('Google login successful! Taking you home...', 'success');
             setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
         } catch (err) {
             console.error('Google auth error:', err);

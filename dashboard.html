@@ -4,147 +4,447 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EmpowerHer | Empowering Homepreneurs</title>
+    <meta name="description" content="EmpowerHer helps homemakers find flexible work opportunities, learn new skills, and earn from home safely.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* --- CSS VARIABLES & RESET --- */
+        /* ═══════════════════════════════════════════
+           DESIGN SYSTEM — Warm & Accessible
+        ═══════════════════════════════════════════ */
         :root {
-            --primary: #2A9D8F; /* Calming Teal */
-            --secondary: #E76F51; /* Warm Terracotta */
-            --accent: #E9C46A; /* Soft Gold */
-            --bg: #FDFCF5; /* Cream White */
-            --text: #264653; /* Dark Charcoal */
+            --primary: #2A9D8F;
+            --primary-light: #e0f2f1;
+            --primary-dark: #1f7a6f;
+            --secondary: #E76F51;
+            --secondary-dark: #d65d3f;
+            --accent: #E9C46A;
+            --pink: #F4A0C4;
+            --pink-light: #fce4f0;
+            --lavender: #E8D5F5;
+            --bg: #FDF8F4;
+            --text: #264653;
+            --text-light: #5a7a8a;
             --white: #ffffff;
-            --shadow: 0 4px 15px rgba(0,0,0,0.05);
+            --shadow: 0 4px 20px rgba(42, 157, 143, 0.08);
+            --shadow-hover: 0 8px 30px rgba(42, 157, 143, 0.15);
+            --radius: 18px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
+            font-family: 'Nunito', 'Segoe UI', sans-serif;
             background-color: var(--bg);
             color: var(--text);
-            line-height: 1.6;
+            font-size: 18px;
+            line-height: 1.7;
+            overflow-x: hidden;
         }
 
         a { text-decoration: none; color: inherit; }
         ul { list-style: none; }
 
-        /* --- NAVIGATION --- */
+        /* ═══════ ANIMATIONS ═══════ */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.6s ease-out both;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+
+        /* ═══════ NAVIGATION ═══════ */
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.5rem 5%;
+            padding: 1rem 5%;
             background: var(--white);
-            box-shadow: var(--shadow);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
             position: sticky;
             top: 0;
             z-index: 1000;
         }
 
         .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
+            font-size: 1.6rem;
+            font-weight: 800;
             color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-flower {
+            font-size: 1.4rem;
         }
 
         .nav-links {
             display: flex;
-            gap: 2rem;
+            gap: 0.5rem;
             align-items: center;
         }
 
         .nav-links a {
-            font-weight: 500;
-            transition: color 0.3s;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: var(--transition);
+            padding: 0.6rem 1.2rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .nav-links a:hover { color: var(--secondary); }
+        .nav-links a:hover {
+            color: var(--secondary);
+            background: #fff5f2;
+        }
+
+        .nav-icon {
+            font-size: 1.2rem;
+        }
 
         .btn-primary {
-            background-color: var(--secondary);
+            background: linear-gradient(135deg, var(--secondary) 0%, #e8845e 100%);
             color: var(--white);
-            padding: 0.6rem 1.5rem;
+            padding: 0.7rem 1.8rem;
             border-radius: 50px;
-            font-weight: 600;
-            transition: transform 0.2s;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            min-height: 50px;
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            background-color: #d65d3f;
+            box-shadow: 0 6px 20px rgba(231, 111, 81, 0.3);
         }
 
         .btn-logout {
             background: none;
-            border: 1px solid #ccc;
-            padding: 0.4rem 1rem;
+            border: 2px solid #e0e0e0;
+            padding: 0.5rem 1.2rem;
             border-radius: 50px;
             cursor: pointer;
-            font-size: 0.85rem;
-            color: #666;
-            transition: 0.3s;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-light);
+            transition: var(--transition);
+            font-family: inherit;
+            min-height: 44px;
         }
-        .btn-logout:hover { border-color: var(--secondary); color: var(--secondary); }
 
-        /* --- HERO SECTION --- */
+        .btn-logout:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+            background: #fff5f2;
+        }
+
+        /* ═══════ HAMBURGER MENU (Mobile) ═══════ */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px;
+            border: none;
+            background: none;
+            z-index: 1100;
+        }
+
+        .hamburger span {
+            width: 28px;
+            height: 3px;
+            background: var(--text);
+            border-radius: 3px;
+            transition: var(--transition);
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.98);
+            z-index: 1050;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .mobile-menu.open {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .mobile-menu a {
+            font-size: 1.3rem;
+            font-weight: 700;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: var(--transition);
+            color: var(--text);
+        }
+
+        .mobile-menu a:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        /* ═══════ HERO SECTION ═══════ */
         .hero {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 4rem 5%;
             min-height: 80vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--pink-light) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            left: -50px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, var(--lavender) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+            opacity: 0.5;
         }
 
         .hero-text {
             flex: 1;
-            padding-right: 2rem;
+            padding-right: 3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-greeting {
+            display: inline-block;
+            background: var(--pink-light);
+            color: #c0507a;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.6s ease-out both;
         }
 
         .hero-text h1 {
-            font-size: 3.5rem;
+            font-size: 3.2rem;
             line-height: 1.2;
             margin-bottom: 1.5rem;
             color: var(--text);
+            font-weight: 800;
+            animation: fadeInUp 0.6s ease-out 0.1s both;
         }
 
-        .hero-text span { color: var(--primary); }
+        .hero-text h1 span {
+            color: var(--primary);
+            position: relative;
+        }
+
+        .hero-text h1 span::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: var(--accent);
+            opacity: 0.3;
+            border-radius: 4px;
+            z-index: -1;
+        }
 
         .hero-text p {
             font-size: 1.2rem;
-            color: #666;
-            margin-bottom: 2rem;
+            color: var(--text-light);
+            margin-bottom: 2.5rem;
             max-width: 500px;
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+
+        .hero-cta {
+            animation: fadeInUp 0.6s ease-out 0.3s both;
+        }
+
+        .hero-cta .btn-primary {
+            font-size: 1.15rem;
+            padding: 1rem 2.5rem;
+            min-height: 56px;
+        }
+
+        .hero-trust {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 2rem;
+            font-size: 0.95rem;
+            color: var(--text-light);
+            animation: fadeInUp 0.6s ease-out 0.4s both;
+        }
+
+        .hero-trust-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #e8f5e9;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-weight: 600;
+            color: #2e7d32;
+            font-size: 0.9rem;
         }
 
         .hero-image {
             flex: 1;
             display: flex;
             justify-content: center;
+            position: relative;
+            z-index: 1;
         }
 
         .hero-card {
             background: var(--white);
-            padding: 2rem;
-            border-radius: 20px;
+            padding: 2.5rem;
+            border-radius: 24px;
             box-shadow: var(--shadow);
-            width: 80%;
+            width: 85%;
             text-align: center;
-            border: 2px solid var(--primary);
+            border: 2px solid var(--primary-light);
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+            position: relative;
+            overflow: hidden;
         }
 
-        /* --- CATEGORIES --- */
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--pink));
+        }
+
+        .hero-card-emoji {
+            font-size: 4.5rem;
+            display: block;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .hero-card h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-card p {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .progress-bar-wrapper {
+            background: #f0f0f0;
+            height: 12px;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 6px;
+            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .progress-label {
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        /* ═══════ CATEGORIES ═══════ */
         .categories {
-            padding: 4rem 5%;
+            padding: 5rem 5%;
             text-align: center;
+            position: relative;
         }
 
         .section-title {
-            font-size: 2rem;
-            margin-bottom: 3rem;
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            font-weight: 800;
             position: relative;
             display: inline-block;
         }
@@ -152,73 +452,188 @@
         .section-title::after {
             content: '';
             display: block;
-            width: 50%;
-            height: 4px;
-            background: var(--accent);
-            margin: 0.5rem auto 0;
-            border-radius: 2px;
+            width: 60px;
+            height: 5px;
+            background: linear-gradient(90deg, var(--accent), var(--pink));
+            margin: 0.7rem auto 0;
+            border-radius: 3px;
+        }
+
+        .section-subtitle {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 2rem;
         }
 
         .card {
             background: var(--white);
-            padding: 2rem;
-            border-radius: 15px;
+            padding: 2.2rem;
+            border-radius: var(--radius);
             box-shadow: var(--shadow);
-            transition: transform 0.3s;
+            transition: var(--transition);
             cursor: pointer;
-            border-bottom: 5px solid transparent;
-        }
-
-        .card:hover {
-            transform: translateY(-10px);
-            border-bottom: 5px solid var(--primary);
-        }
-
-        .icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
+            border: 2px solid transparent;
+            text-decoration: none;
             display: block;
         }
 
-        /* --- HOW IT WORKS --- */
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .icon-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1.2rem;
+            transition: var(--transition);
+        }
+
+        .card:hover .icon-circle {
+            transform: scale(1.1);
+        }
+
+        .icon-cooking { background: #ffe3e3; }
+        .icon-craft { background: #fff3cd; }
+        .icon-teaching { background: #e3f2fd; }
+        .icon-data { background: var(--lavender); }
+
+        .card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .card p {
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        /* ═══════ HOW IT WORKS ═══════ */
         .steps {
-            background-color: #eaf6f5; /* Light tint of Primary */
-            padding: 4rem 5%;
+            background: linear-gradient(180deg, var(--primary-light) 0%, var(--bg) 100%);
+            padding: 5rem 5%;
+            text-align: center;
         }
 
         .step-container {
             display: flex;
-            justify-content: space-around;
+            justify-content: center;
             flex-wrap: wrap;
-            margin-top: 2rem;
+            gap: 2rem;
+            margin-top: 3rem;
+            position: relative;
         }
 
         .step {
             text-align: center;
             max-width: 300px;
-            margin-bottom: 2rem;
+            background: var(--white);
+            padding: 2.5rem 2rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .step:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
         }
 
         .step-number {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary) 0%, #3bc4b4 100%);
             color: white;
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 1rem;
-            font-weight: bold;
+            margin: 0 auto 1.2rem;
+            font-weight: 800;
+            font-size: 1.3rem;
+            box-shadow: 0 4px 15px rgba(42, 157, 143, 0.3);
         }
 
-        /* --- FOOTER --- */
+        .step h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .step p {
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        .step-emoji {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        /* ═══════ ENCOURAGEMENT BANNER ═══════ */
+        .encouragement {
+            background: linear-gradient(135deg, var(--primary) 0%, #218c7e 100%);
+            color: var(--white);
+            padding: 4rem 5%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .encouragement::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 200px;
+            height: 200px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+        }
+
+        .encouragement h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .encouragement p {
+            font-size: 1.15rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .encouragement .btn-primary {
+            background: var(--white);
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .encouragement .btn-primary:hover {
+            background: var(--accent);
+            color: var(--text);
+        }
+
+        /* ═══════ FOOTER ═══════ */
         footer {
             background: var(--text);
             color: var(--white);
@@ -226,120 +641,257 @@
             text-align: center;
         }
 
-        /* --- RESPONSIVE --- */
+        .footer-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.7);
+            transition: var(--transition);
+            font-size: 0.95rem;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        .footer-safety {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.1);
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        /* ═══════ RESPONSIVE ═══════ */
         @media (max-width: 768px) {
+            body { font-size: 16px; }
+
+            .nav-links { display: none; }
+            .hamburger { display: flex; }
+
             .hero {
                 flex-direction: column-reverse;
                 text-align: center;
                 padding: 2rem 5%;
+                min-height: auto;
             }
-            .hero-text { padding-right: 0; }
-            .hero-text h1 { font-size: 2.5rem; }
-            .nav-links { display: none; } /* Simplified for demo */
+
+            .hero-text {
+                padding-right: 0;
+                margin-top: 2rem;
+            }
+
+            .hero-text h1 { font-size: 2.2rem; }
+            .hero-text p { margin-left: auto; margin-right: auto; }
+
+            .hero-trust { justify-content: center; }
+            .hero-image { width: 100%; }
+            .hero-card { width: 100%; }
+
+            .hero-cta .btn-primary {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .section-title { font-size: 1.8rem; }
+
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+
+            .step-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .encouragement h2 { font-size: 1.6rem; }
+
+            .footer-links { gap: 1rem; }
         }
     </style>
 </head>
 <body>
 
     <nav>
-        <div class="logo">EmpowerHer</div>
+        <div class="logo">
+            <span class="logo-flower">🌸</span> EmpowerHer
+        </div>
         <div class="nav-links">
-            <a href="jobs.html">Find Work</a>
-            <a href="learn.html">Learn Skills</a>
-            <a href="community.html">Community</a>
+            <a href="jobs.html"><span class="nav-icon">💼</span> Find Work</a>
+            <a href="learn.html"><span class="nav-icon">📖</span> Learn Skills</a>
+            <a href="community.html"><span class="nav-icon">👩‍👩‍👧</span> Community</a>
             <button class="btn-logout" id="logout-btn" onclick="logout()" style="display:none;">Logout</button>
         </div>
-        
+        <button class="hamburger" id="hamburger-btn" onclick="toggleMenu()" aria-label="Open Menu">
+            <span></span><span></span><span></span>
+        </button>
     </nav>
+
+    <div class="mobile-menu" id="mobile-menu">
+        <a href="dashboard.html" onclick="toggleMenu()">🏠 Home</a>
+        <a href="jobs.html" onclick="toggleMenu()">💼 Find Work</a>
+        <a href="learn.html" onclick="toggleMenu()">📖 Learn Skills</a>
+        <a href="community.html" onclick="toggleMenu()">👩‍👩‍👧 Community</a>
+        <button class="btn-logout" id="mobile-logout-btn" onclick="logout()" style="display:none;">🚪 Logout</button>
+    </div>
 
     <section class="hero">
         <div class="hero-text">
-            <h1>Turn your home skills into <span>Financial Independence</span>.</h1>
-            <p>Flexible work opportunities tailored for homemakers. Work 1 hour or 8 hours—it's your choice.</p>
-            <a href="jobs.html" class="btn-primary" style="padding: 1rem 2.5rem;">Start Earning Today</a>
+            <div class="hero-greeting" id="hero-greeting">🌸 Welcome!</div>
+            <h1>Turn your home skills into <span>Financial Freedom</span></h1>
+            <p>Simple and safe work opportunities made just for you. Work 1 hour or 8 hours — it's your choice. No experience needed!</p>
+            <div class="hero-cta">
+                <a href="jobs.html" class="btn-primary">✨ Start Earning Today</a>
+            </div>
+            <div class="hero-trust">
+                <div class="hero-trust-badge">🛡️ 100% Safe & Verified</div>
+                <span>Trusted by 10,000+ women</span>
+            </div>
         </div>
         <div class="hero-image">
             <div class="hero-card">
-                <span style="font-size: 4rem;">👩‍💻</span>
+                <span class="hero-card-emoji">👩‍💻</span>
                 <h3 id="welcome-name">Welcome!</h3>
                 <p id="welcome-jobs"><strong>3 New Jobs</strong> match your skills today!</p>
-                <div style="margin-top: 1rem; background: #eee; height: 10px; border-radius: 5px;">
-                    <div id="profile-progress-bar" style="width: 0%; background: var(--secondary); height: 100%; border-radius: 5px; transition: width 1s ease;"></div>
+                <div class="progress-bar-wrapper">
+                    <div class="progress-bar-fill" id="profile-progress-bar" style="width: 0%;"></div>
                 </div>
-                <p id="profile-progress-text" style="font-size: 0.8rem; margin-top: 0.5rem;">Profile Completion: 0%</p>
+                <div class="progress-label" id="profile-progress-text">Profile Completion: 0%</div>
             </div>
         </div>
     </section>
 
     <section class="categories">
-        <h2 class="section-title">What are you good at?</h2>
+        <h2 class="section-title animate-in">What are you good at? 🌟</h2>
+        <p class="section-subtitle animate-in delay-1">Pick what you love — we'll find the right work for you</p>
         <div class="grid">
-            <div class="card">
-                <span class="icon">🍲</span>
-                <h3>Home Catering</h3>
-                <p>Sell home-cooked meals or tiffins to nearby offices.</p>
-            </div>
-            <div class="card">
-                <span class="icon">🧶</span>
+            <a href="jobs.html" class="card animate-in delay-1">
+                <div class="icon-circle icon-cooking">🍲</div>
+                <h3>Home Cooking</h3>
+                <p>Sell delicious home-cooked meals or tiffins to people nearby.</p>
+            </a>
+            <a href="jobs.html" class="card animate-in delay-2">
+                <div class="icon-circle icon-craft">🧶</div>
                 <h3>Handicrafts</h3>
-                <p>Sell embroidery, knitting, or handmade decor.</p>
-            </div>
-            <div class="card">
-                <span class="icon">📚</span>
+                <p>Sell your beautiful embroidery, knitting, or handmade items.</p>
+            </a>
+            <a href="jobs.html" class="card animate-in delay-3">
+                <div class="icon-circle icon-teaching">📚</div>
                 <h3>Online Tutoring</h3>
-                <p>Teach kids subjects, languages, or hobbies via video.</p>
-            </div>
-            <div class="card">
-                <span class="icon">⌨️</span>
+                <p>Teach children subjects, languages, or hobbies from home.</p>
+            </a>
+            <a href="jobs.html" class="card animate-in delay-4">
+                <div class="icon-circle icon-data">⌨️</div>
                 <h3>Data Entry</h3>
-                <p>Simple typing jobs that can be done anytime.</p>
-            </div>
+                <p>Simple typing work that you can do anytime, from anywhere.</p>
+            </a>
         </div>
     </section>
 
     <section class="steps">
-        <div style="text-align: center;">
-            <h2 class="section-title">How it Works</h2>
-        </div>
+        <h2 class="section-title">How It Works 🤝</h2>
+        <p class="section-subtitle">Just 3 simple steps to start earning</p>
         <div class="step-container">
-            <div class="step">
+            <div class="step animate-in delay-1">
                 <div class="step-number">1</div>
-                <h3>Create Profile</h3>
-                <p>Sign up simply using your phone number. No complex resumes required.</p>
+                <span class="step-emoji">📱</span>
+                <h3>Create Your Profile</h3>
+                <p>Sign up easily using your phone number. No complicated forms — just your name and number!</p>
             </div>
-            <div class="step">
+            <div class="step animate-in delay-2">
                 <div class="step-number">2</div>
-                <h3>Choose Tasks</h3>
-                <p>Browse jobs based on how much free time you have today.</p>
+                <span class="step-emoji">🔍</span>
+                <h3>Choose Your Work</h3>
+                <p>Browse jobs based on how much free time you have today. Pick what you like!</p>
             </div>
-            <div class="step">
+            <div class="step animate-in delay-3">
                 <div class="step-number">3</div>
-                <h3>Get Paid Securely</h3>
-                <p>Receive payments directly to your bank account or UPI weekly.</p>
+                <span class="step-emoji">💰</span>
+                <h3>Get Paid Safely</h3>
+                <p>Receive money directly in your bank account or UPI every week. Guaranteed!</p>
             </div>
         </div>
     </section>
 
+    <section class="encouragement">
+        <h2>You Are Stronger Than You Think 💪🌸</h2>
+        <p>Thousands of women like you are already earning from home. Your skills matter, and we're here to help you every step of the way.</p>
+        <a href="community.html" class="btn-primary">💬 Join Our Community</a>
+    </section>
+
     <footer>
-        <p>&copy; 2024 EmpowerHer. Empowering households, one job at a time.</p>
-        <p style="font-size: 0.8rem; margin-top: 1rem; opacity: 0.7;">Safety First Policy | Verified Employers Only</p>
+        <div class="footer-content">
+            <div class="footer-logo">🌸 EmpowerHer</div>
+            <p style="opacity: 0.8; margin-bottom: 1rem;">Empowering households, one opportunity at a time.</p>
+            <div class="footer-links">
+                <a href="jobs.html">Find Work</a>
+                <a href="learn.html">Learn Skills</a>
+                <a href="community.html">Community</a>
+            </div>
+            <div class="footer-safety">
+                🛡️ Safety First Policy • Verified Employers Only
+            </div>
+            <p style="font-size: 0.85rem; margin-top: 1.5rem; opacity: 0.5;">© 2024 EmpowerHer. Made with ❤️ for women.</p>
+        </div>
     </footer>
 
 <script>
     const API_BASE = window.location.origin;
     const token = localStorage.getItem('empowerher_token');
 
-    // Load user data if logged in
+    // --- Time-of-day greeting ---
+    function getGreeting() {
+        const hour = new Date().getHours();
+        if (hour < 12) return '🌅 Good Morning!';
+        if (hour < 17) return '☀️ Good Afternoon!';
+        return '🌙 Good Evening!';
+    }
+    document.getElementById('hero-greeting').textContent = getGreeting();
+
+    // --- Mobile Menu ---
+    function toggleMenu() {
+        const menu = document.getElementById('mobile-menu');
+        const btn = document.getElementById('hamburger-btn');
+        menu.classList.toggle('open');
+        btn.classList.toggle('active');
+    }
+
+    // --- Dashboard Data ---
     async function loadDashboard() {
         if (!token) {
-            document.getElementById('welcome-name').textContent = 'Welcome!';
+            document.getElementById('welcome-name').textContent = 'Welcome! 🌸';
             document.getElementById('profile-progress-bar').style.width = '0%';
-            document.getElementById('profile-progress-text').textContent = 'Login to track progress';
+            document.getElementById('profile-progress-text').textContent = 'Login to see your progress';
             return;
         }
 
-        // Show logout button
         document.getElementById('logout-btn').style.display = 'inline-block';
+        const mobileLogout = document.getElementById('mobile-logout-btn');
+        if (mobileLogout) mobileLogout.style.display = 'inline-block';
 
         try {
             const res = await fetch(`${API_BASE}/api/auth/me`, {
@@ -357,14 +909,16 @@
             const data = await res.json();
             const user = data.user;
 
-            document.getElementById('welcome-name').textContent = `Welcome, ${user.fullName.split(' ')[0]}`;
+            const firstName = user.fullName.split(' ')[0];
+            document.getElementById('welcome-name').textContent = `Welcome, ${firstName}! 🌸`;
+            document.getElementById('hero-greeting').textContent = `${getGreeting().slice(0, -1)}, ${firstName}! 🌸`;
+
             document.getElementById('profile-progress-bar').style.width = `${user.profileCompletion}%`;
             document.getElementById('profile-progress-text').textContent = `Profile Completion: ${user.profileCompletion}%`;
 
-            // Fetch job count
             const jobRes = await fetch(`${API_BASE}/api/jobs`);
             const jobData = await jobRes.json();
-            document.getElementById('welcome-jobs').innerHTML = `<strong>${jobData.total} Jobs</strong> available for you today!`;
+            document.getElementById('welcome-jobs').innerHTML = `<strong>${jobData.total} Jobs</strong> available for you today! 🎉`;
 
         } catch (err) {
             console.error('Dashboard load error:', err);

@@ -4,140 +4,838 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Community | EmpowerHer</title>
+    <meta name="description" content="Join the EmpowerHer community — share stories, ask questions, and connect with mentors.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #2A9D8F; --secondary: #E76F51; --bg: #FDFCF5; --text: #264653; --white: #ffffff; --shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: var(--bg); color: var(--text); }
+        :root {
+            --primary: #2A9D8F;
+            --primary-light: #e0f2f1;
+            --primary-dark: #1f7a6f;
+            --secondary: #E76F51;
+            --accent: #E9C46A;
+            --pink: #F4A0C4;
+            --pink-light: #fce4f0;
+            --lavender: #E8D5F5;
+            --bg: #FDF8F4;
+            --text: #264653;
+            --text-light: #5a7a8a;
+            --white: #ffffff;
+            --shadow: 0 4px 20px rgba(42, 157, 143, 0.08);
+            --shadow-hover: 0 8px 30px rgba(42, 157, 143, 0.15);
+            --success: #28a745;
+            --radius: 18px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Nunito', 'Segoe UI', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            font-size: 18px;
+            line-height: 1.7;
+        }
+
         a { text-decoration: none; color: inherit; }
-        nav { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 5%; background: var(--white); box-shadow: var(--shadow); position: sticky; top: 0; z-index: 100;}
-        .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
-        .nav-links { display: flex; gap: 2rem; align-items: center; }
-        .btn-primary { background: var(--secondary); color: white; padding: 0.6rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer; border: none;}
-        .btn-logout { background: none; border: 1px solid #ccc; padding: 0.4rem 1rem; border-radius: 50px; cursor: pointer; font-size: 0.85rem; color: #666; }
-        .layout-grid { display: grid; grid-template-columns: 2.5fr 1fr; gap: 2rem; max-width: 1200px; margin: 2rem auto; padding: 0 5%; }
-        .create-post { background: var(--white); padding: 1.5rem; border-radius: 15px; box-shadow: var(--shadow); margin-bottom: 2rem; }
-        .post-input { width: 100%; border: 1px solid #ddd; padding: 1rem; border-radius: 10px; margin-bottom: 1rem; resize: none; font-family: inherit; font-size: 1rem; }
-        .post-card { background: var(--white); border-radius: 15px; box-shadow: var(--shadow); padding: 1.5rem; margin-bottom: 1.5rem; }
-        .post-header { display: flex; gap: 15px; align-items: center; margin-bottom: 1rem; }
-        .avatar { width: 50px; height: 50px; background: #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #555; }
-        .user-meta h4 { margin-bottom: 2px; }
-        .user-meta span { font-size: 0.8rem; color: #888; }
-        .post-actions { border-top: 1px solid #eee; margin-top: 1rem; padding-top: 1rem; display: flex; gap: 2rem; }
-        .action-btn { color: #666; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 0.9rem; background: none; border: none; font-family: inherit; }
-        .action-btn:hover { color: var(--primary); }
-        .action-btn.liked { color: #d63031; }
-        .comments-section { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #f0f0f0; display: none; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(25px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* ═══════ NAVIGATION ═══════ */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background: var(--white);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            font-weight: 600;
+            font-size: 1rem;
+            transition: var(--transition);
+            padding: 0.6rem 1.2rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-links a:hover { color: var(--secondary); background: #fff5f2; }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary) 0%, #e8845e 100%);
+            color: var(--white);
+            padding: 0.7rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            min-height: 48px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(231, 111, 81, 0.3);
+        }
+
+        .btn-logout {
+            background: none;
+            border: 2px solid #e0e0e0;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-light);
+            transition: var(--transition);
+            font-family: inherit;
+            min-height: 44px;
+        }
+
+        .btn-logout:hover { border-color: var(--secondary); color: var(--secondary); }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px;
+            border: none;
+            background: none;
+            z-index: 1100;
+        }
+
+        .hamburger span {
+            width: 28px;
+            height: 3px;
+            background: var(--text);
+            border-radius: 3px;
+            transition: var(--transition);
+        }
+
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(255,255,255,0.98);
+            z-index: 1050;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .mobile-menu.open { display: flex; animation: fadeIn 0.3s ease; }
+
+        .mobile-menu a {
+            font-size: 1.3rem;
+            font-weight: 700;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text);
+        }
+
+        /* ═══════ COMMUNITY HEADER ═══════ */
+        .community-header {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--pink-light) 100%);
+            padding: 2.5rem 5%;
+            text-align: center;
+        }
+
+        .community-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .community-header p {
+            color: var(--text-light);
+            font-size: 1.05rem;
+        }
+
+        /* ═══════ LAYOUT ═══════ */
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 2.5fr 1fr;
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 5%;
+        }
+
+        /* ═══════ CREATE POST ═══════ */
+        .create-post {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .create-post-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .create-post-header h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .post-input {
+            width: 100%;
+            border: 2px solid #e8e8e8;
+            padding: 1.2rem;
+            border-radius: 14px;
+            margin-bottom: 1rem;
+            resize: none;
+            font-family: inherit;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+            color: var(--text);
+            min-height: 100px;
+        }
+
+        .post-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(42, 157, 143, 0.1);
+        }
+
+        .post-input::placeholder {
+            color: #b0b0b0;
+        }
+
+        .post-submit-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .post-hint {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        /* ═══════ POST CARDS ═══════ */
+        .post-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.8rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+            animation: fadeInUp 0.5s ease-out both;
+        }
+
+        .post-card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .post-header {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .user-meta h4 {
+            margin-bottom: 2px;
+            font-size: 1.05rem;
+        }
+
+        .user-meta span {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .post-content {
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        .post-actions {
+            border-top: 1px solid #f0f0f0;
+            margin-top: 1.2rem;
+            padding-top: 1rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-btn {
+            color: var(--text-light);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.95rem;
+            background: none;
+            border: none;
+            font-family: inherit;
+            padding: 8px 16px;
+            border-radius: 12px;
+            transition: var(--transition);
+            font-weight: 600;
+            min-height: 44px;
+        }
+
+        .action-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .action-btn.liked {
+            color: #d63031;
+            background: #ffe3e3;
+        }
+
+        .action-icon {
+            font-size: 1.2rem;
+        }
+
+        /* ═══════ COMMENTS ═══════ */
+        .comments-section {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f0f0f0;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
         .comments-section.open { display: block; }
-        .comment-item { display: flex; gap: 10px; margin-bottom: 10px; padding: 8px; background: #f9f9f9; border-radius: 8px; }
-        .comment-avatar { width: 30px; height: 30px; background: #e0e0e0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: bold; flex-shrink: 0; }
-        .comment-input-row { display: flex; gap: 8px; margin-top: 10px; }
-        .comment-input { flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.9rem; outline: none; }
-        .comment-submit { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; }
-        .sidebar-card { background: var(--white); padding: 1.5rem; border-radius: 15px; box-shadow: var(--shadow); margin-bottom: 2rem; }
-        .sidebar-title { font-size: 1.1rem; margin-bottom: 1rem; border-bottom: 2px solid var(--primary); padding-bottom: 5px; display: inline-block;}
-        .mentor-item { display: flex; gap: 10px; align-items: center; margin-bottom: 15px; }
-        .mentor-badge { background: #e0f2f1; color: var(--primary); font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; }
-        .toast { position: fixed; bottom: 30px; right: 30px; background: var(--text); color: white; padding: 15px 25px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); z-index: 9999; display: none; }
-        .toast.success { background: #28a745; }
+
+        .comment-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 10px 14px;
+            background: #f9f8f5;
+            border-radius: 12px;
+        }
+
+        .comment-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .comment-text {
+            font-size: 0.95rem;
+        }
+
+        .comment-text strong {
+            color: var(--text);
+        }
+
+        .comment-input-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .comment-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e8e8e8;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            outline: none;
+            transition: var(--transition);
+            min-height: 46px;
+        }
+
+        .comment-input:focus {
+            border-color: var(--primary);
+        }
+
+        .comment-input::placeholder {
+            color: #b0b0b0;
+        }
+
+        .comment-submit {
+            background: linear-gradient(135deg, var(--primary), #3bc4b4);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: 700;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            min-height: 46px;
+        }
+
+        .comment-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(42, 157, 143, 0.3);
+        }
+
+        /* ═══════ SIDEBAR ═══════ */
+        .sidebar-card {
+            background: var(--white);
+            padding: 1.8rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-title::after {
+            content: '';
+            flex: 1;
+            height: 2px;
+            background: var(--primary-light);
+            margin-left: 8px;
+        }
+
+        .mentor-item {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 16px;
+            padding: 10px;
+            border-radius: 12px;
+            transition: var(--transition);
+        }
+
+        .mentor-item:hover {
+            background: #f9f8f5;
+        }
+
+        .mentor-avatar {
+            width: 44px;
+            height: 44px;
+            background: var(--primary-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .mentor-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .mentor-badge {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-size: 0.75rem;
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-weight: 700;
+        }
+
+        .btn-view-all {
+            width: 100%;
+            padding: 10px;
+            background: var(--white);
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            margin-top: 8px;
+            min-height: 44px;
+        }
+
+        .btn-view-all:hover {
+            background: var(--primary-light);
+        }
+
+        /* Event card */
+        .event-card {
+            background: linear-gradient(135deg, var(--lavender), var(--pink-light));
+            padding: 1.5rem;
+            border-radius: 14px;
+            margin-top: 1rem;
+        }
+
+        .event-date {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .event-desc {
+            font-size: 0.95rem;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        .event-link {
+            color: var(--secondary);
+            font-weight: 700;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: var(--transition);
+        }
+
+        .event-link:hover {
+            color: var(--secondary);
+            gap: 8px;
+        }
+
+        /* ═══════ TOAST ═══════ */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--text);
+            color: white;
+            padding: 16px 28px;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            z-index: 9999;
+            display: none;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .toast.success { background: var(--success); }
         .toast.error { background: #d63031; }
-        .loading-text { text-align: center; padding: 2rem; color: #999; }
-        @media (max-width: 768px) { .nav-links { display: none; } .layout-grid { grid-template-columns: 1fr; } }
+
+        .loading-text {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        /* ═══════ RESPONSIVE ═══════ */
+        @media (max-width: 768px) {
+            body { font-size: 16px; }
+            .nav-links { display: none; }
+            .hamburger { display: flex; }
+            .layout-grid { grid-template-columns: 1fr; }
+            .community-header h1 { font-size: 1.6rem; }
+            .post-actions { flex-wrap: wrap; gap: 0.5rem; }
+            .action-btn { font-size: 0.9rem; padding: 8px 12px; }
+            .toast { left: 20px; right: 20px; bottom: 20px; text-align: center; }
+        }
     </style>
 </head>
 <body>
+
     <nav>
-        <div class="logo">EmpowerHer</div>
+        <div class="logo">🌸 EmpowerHer</div>
         <div class="nav-links">
-            <a href="dashboard.html">Home</a>
-            <a href="jobs.html">Find Work</a>
-            <a href="learn.html">Learn Skills</a>
+            <a href="dashboard.html">🏠 Home</a>
+            <a href="jobs.html">💼 Find Work</a>
+            <a href="learn.html">📖 Learn Skills</a>
             <button class="btn-logout" id="logout-btn" onclick="logout()" style="display:none;">Logout</button>
         </div>
+        <button class="hamburger" id="hamburger-btn" onclick="toggleMenu()" aria-label="Open Menu">
+            <span></span><span></span><span></span>
+        </button>
     </nav>
+
+    <div class="mobile-menu" id="mobile-menu">
+        <a href="dashboard.html">🏠 Home</a>
+        <a href="jobs.html">💼 Find Work</a>
+        <a href="learn.html">📖 Learn Skills</a>
+        <a href="community.html">👩‍👩‍👧 Community</a>
+        <button class="btn-logout" id="mobile-logout-btn" onclick="logout()" style="display:none;">🚪 Logout</button>
+    </div>
+
+    <div class="community-header">
+        <h1>Our Community 👩‍👩‍👧‍👧💬</h1>
+        <p>Share your stories, ask questions, and help each other grow!</p>
+    </div>
+
     <div class="layout-grid">
         <main>
             <div class="create-post">
-                <h3 style="margin-bottom: 1rem;">Ask the Community</h3>
-                <textarea class="post-input" id="post-content" rows="3" placeholder="Share your success story or ask a question..."></textarea>
-                <div style="text-align: right;"><button class="btn-primary" id="post-btn" onclick="createPost()">Post</button></div>
+                <div class="create-post-header">
+                    <span style="font-size:1.5rem;">✍️</span>
+                    <h3>Share Something</h3>
+                </div>
+                <textarea class="post-input" id="post-content" rows="3" placeholder="Share your success story, ask a question, or say hello! 😊"></textarea>
+                <div class="post-submit-row">
+                    <span class="post-hint">💡 Everyone here is friendly and helpful!</span>
+                    <button class="btn-primary" id="post-btn" onclick="createPost()">✨ Post</button>
+                </div>
             </div>
-            <div id="posts-feed"><div class="loading-text">Loading community posts...</div></div>
+            <div id="posts-feed"><div class="loading-text">⏳ Loading community posts...</div></div>
         </main>
         <aside>
             <div class="sidebar-card">
-                <h3 class="sidebar-title">Meet Mentors</h3>
+                <h3 class="sidebar-title">🧑‍🏫 Meet Mentors</h3>
                 <div id="mentors-list"><div class="loading-text" style="padding:0.5rem;">Loading...</div></div>
-                <button style="width:100%;padding:8px;background:white;border:1px solid var(--primary);color:var(--primary);border-radius:5px;cursor:pointer;margin-top:10px;">View All Mentors</button>
+                <button class="btn-view-all">👀 View All Mentors</button>
             </div>
             <div class="sidebar-card">
-                <h3 class="sidebar-title">Upcoming Events</h3>
-                <p style="font-size:0.9rem;margin-bottom:10px;"><strong>📅 Saturday, 4 PM</strong></p>
-                <p style="font-size:0.9rem;">Zoom: "How to balance Home & Work" with Guest Speaker.</p>
-                <a href="#" style="color:var(--secondary);font-weight:bold;font-size:0.9rem;display:block;margin-top:10px;">Register Free →</a>
+                <h3 class="sidebar-title">📅 Upcoming Events</h3>
+                <div class="event-card">
+                    <div class="event-date">📅 Saturday, 4 PM</div>
+                    <p class="event-desc">Zoom: "How to balance Home & Work" with a Guest Speaker</p>
+                    <a href="#" class="event-link">Register Free →</a>
+                </div>
             </div>
         </aside>
     </div>
+
     <div class="toast" id="toast"></div>
+
 <script>
 const API_BASE = window.location.origin;
 const token = localStorage.getItem('empowerher_token');
-if (token) document.getElementById('logout-btn').style.display = 'inline-block';
+if (token) {
+    document.getElementById('logout-btn').style.display = 'inline-block';
+    const mobileLogout = document.getElementById('mobile-logout-btn');
+    if (mobileLogout) mobileLogout.style.display = 'inline-block';
+}
+
+function toggleMenu() {
+    const menu = document.getElementById('mobile-menu');
+    const btn = document.getElementById('hamburger-btn');
+    menu.classList.toggle('open');
+    btn.classList.toggle('active');
+}
 
 function logout() { localStorage.removeItem('empowerher_token'); localStorage.removeItem('empowerher_user'); window.location.href = 'index.html'; }
-function showToast(msg, type='success') { const t=document.getElementById('toast'); t.textContent=msg; t.className='toast '+type; t.style.display='block'; setTimeout(()=>{t.style.display='none';},3000); }
-function getInitials(n) { return n.split(' ').map(w=>w[0]).join('').toUpperCase().substring(0,2); }
-function getAvatarColor(n) { const c=[{bg:'#ffe3e3',color:'#d63031'},{bg:'#e3f2fd',color:'#0984e3'},{bg:'#fff3cd',color:'#856404'},{bg:'#e0f2f1',color:'#2A9D8F'},{bg:'#f3e5f5',color:'#8e24aa'}]; return c[n.charCodeAt(0)%c.length]; }
-function timeAgo(d) { const now=new Date(), date=new Date(d+'Z'), diff=Math.floor((now-date)/1000); if(diff<60)return 'Just now'; if(diff<3600)return Math.floor(diff/60)+' min ago'; if(diff<86400)return Math.floor(diff/3600)+' hours ago'; return Math.floor(diff/86400)+' days ago'; }
+
+function showToast(msg, type='success') {
+    const t = document.getElementById('toast');
+    t.textContent = (type === 'success' ? '✅ ' : '⚠️ ') + msg;
+    t.className = 'toast ' + type;
+    t.style.display = 'block';
+    setTimeout(() => { t.style.display = 'none'; }, 3500);
+}
+
+function getInitials(n) { return n.split(' ').map(w => w[0]).join('').toUpperCase().substring(0, 2); }
+function getAvatarColor(n) {
+    const c = [
+        { bg: '#ffe3e3', color: '#d63031' },
+        { bg: '#e3f2fd', color: '#0984e3' },
+        { bg: '#fff3cd', color: '#856404' },
+        { bg: '#e0f2f1', color: '#2A9D8F' },
+        { bg: '#f3e5f5', color: '#8e24aa' },
+        { bg: '#fce4f0', color: '#c0507a' }
+    ];
+    return c[n.charCodeAt(0) % c.length];
+}
+function timeAgo(d) {
+    const now = new Date(), date = new Date(d + 'Z'), diff = Math.floor((now - date) / 1000);
+    if (diff < 60) return 'Just now';
+    if (diff < 3600) return Math.floor(diff / 60) + ' min ago';
+    if (diff < 86400) return Math.floor(diff / 3600) + ' hours ago';
+    return Math.floor(diff / 86400) + ' days ago';
+}
 
 async function loadPosts() {
     try {
-        const h = {}; if(token) h['Authorization']='Bearer '+token;
-        const res = await fetch(API_BASE+'/api/posts', {headers:h});
+        const h = {}; if (token) h['Authorization'] = 'Bearer ' + token;
+        const res = await fetch(API_BASE + '/api/posts', { headers: h });
         const data = await res.json();
         const feed = document.getElementById('posts-feed');
-        if(!data.posts.length) { feed.innerHTML='<div class="loading-text">No posts yet. Be the first!</div>'; return; }
-        feed.innerHTML = data.posts.map(p => {
-            const ac=getAvatarColor(p.fullName), ini=getInitials(p.fullName);
-            return '<div class="post-card" id="post-'+p.id+'"><div class="post-header"><div class="avatar" style="background:'+ac.bg+';color:'+ac.color+';">'+ini+'</div><div class="user-meta"><h4>'+p.fullName+'</h4><span>'+(p.skills||'Member')+' • '+timeAgo(p.createdAt)+'</span></div></div><p>'+p.content+'</p><div class="post-actions"><button class="action-btn '+(p.userLiked?'liked':'')+'" onclick="toggleLike('+p.id+',this)">'+(p.userLiked?'❤️':'🤍')+' <span>'+p.likeCount+' Likes</span></button><button class="action-btn" onclick="toggleComments('+p.id+')">💬 <span>'+p.commentCount+' Comments</span></button><button class="action-btn" onclick="sharePost('+p.id+')">↪ Share</button></div><div class="comments-section" id="comments-'+p.id+'"><div id="comments-list-'+p.id+'"></div><div class="comment-input-row"><input class="comment-input" id="comment-input-'+p.id+'" placeholder="Write a comment..." onkeypress="if(event.key===\'Enter\')addComment('+p.id+')"><button class="comment-submit" onclick="addComment('+p.id+')">Send</button></div></div></div>';
+        if (!data.posts.length) {
+            feed.innerHTML = '<div class="loading-text">🌱 No posts yet. Be the first to share something!</div>';
+            return;
+        }
+        feed.innerHTML = data.posts.map((p, i) => {
+            const ac = getAvatarColor(p.fullName), ini = getInitials(p.fullName);
+            return '<div class="post-card" id="post-' + p.id + '" style="animation-delay:' + (i * 0.1) + 's">' +
+                '<div class="post-header">' +
+                '<div class="avatar" style="background:' + ac.bg + ';color:' + ac.color + ';">' + ini + '</div>' +
+                '<div class="user-meta"><h4>' + p.fullName + '</h4><span>' + (p.skills || 'Member') + ' • ' + timeAgo(p.createdAt) + '</span></div>' +
+                '</div>' +
+                '<p class="post-content">' + p.content + '</p>' +
+                '<div class="post-actions">' +
+                '<button class="action-btn ' + (p.userLiked ? 'liked' : '') + '" onclick="toggleLike(' + p.id + ',this)">' +
+                '<span class="action-icon">' + (p.userLiked ? '❤️' : '🤍') + '</span> <span>' + p.likeCount + ' Likes</span></button>' +
+                '<button class="action-btn" onclick="toggleComments(' + p.id + ')">' +
+                '<span class="action-icon">💬</span> <span>' + p.commentCount + ' Comments</span></button>' +
+                '<button class="action-btn" onclick="sharePost(' + p.id + ')">' +
+                '<span class="action-icon">↗️</span> Share</button>' +
+                '</div>' +
+                '<div class="comments-section" id="comments-' + p.id + '">' +
+                '<div id="comments-list-' + p.id + '"></div>' +
+                '<div class="comment-input-row">' +
+                '<input class="comment-input" id="comment-input-' + p.id + '" placeholder="Write a kind comment... 😊" onkeypress="if(event.key===\'Enter\')addComment(' + p.id + ')">' +
+                '<button class="comment-submit" onclick="addComment(' + p.id + ')">Send</button>' +
+                '</div></div></div>';
         }).join('');
-    } catch(e) { document.getElementById('posts-feed').innerHTML='<div class="loading-text">Error loading posts.</div>'; }
+    } catch (e) {
+        document.getElementById('posts-feed').innerHTML = '<div class="loading-text">😕 Error loading posts. Please try again.</div>';
+    }
 }
 
 async function createPost() {
-    if(!token){showToast('Please login to post.','error');return;}
-    const content=document.getElementById('post-content').value.trim();
-    if(!content){showToast('Write something first.','error');return;}
-    const btn=document.getElementById('post-btn'); btn.disabled=true; btn.textContent='Posting...';
+    if (!token) { showToast('Please login to share a post.', 'error'); return; }
+    const content = document.getElementById('post-content').value.trim();
+    if (!content) { showToast('Write something first! 😊', 'error'); return; }
+    const btn = document.getElementById('post-btn');
+    btn.disabled = true; btn.textContent = '⏳ Posting...';
     try {
-        const res=await fetch(API_BASE+'/api/posts',{method:'POST',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({content})});
-        const data=await res.json();
-        if(!res.ok){showToast(data.error,'error');return;}
-        document.getElementById('post-content').value=''; showToast('Post created!','success'); loadPosts();
-    } catch(e){showToast('Error creating post.','error');} finally{btn.disabled=false;btn.textContent='Post';}
+        const res = await fetch(API_BASE + '/api/posts', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content })
+        });
+        const data = await res.json();
+        if (!res.ok) { showToast(data.error, 'error'); return; }
+        document.getElementById('post-content').value = '';
+        showToast('Your post is live! 🎉', 'success');
+        loadPosts();
+    } catch (e) { showToast('Error creating post.', 'error'); }
+    finally { btn.disabled = false; btn.textContent = '✨ Post'; }
 }
 
-async function toggleLike(id,btn) {
-    if(!token){showToast('Login to like.','error');return;}
-    try{const r=await fetch(API_BASE+'/api/posts/'+id+'/like',{method:'POST',headers:{'Authorization':'Bearer '+token}});const d=await r.json();if(r.ok){btn.classList.toggle('liked',d.liked);btn.innerHTML=(d.liked?'❤️':'🤍')+' <span>'+d.likeCount+' Likes</span>';}}catch(e){}
+async function toggleLike(id, btn) {
+    if (!token) { showToast('Login to like posts.', 'error'); return; }
+    try {
+        const r = await fetch(API_BASE + '/api/posts/' + id + '/like', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token } });
+        const d = await r.json();
+        if (r.ok) {
+            btn.classList.toggle('liked', d.liked);
+            btn.innerHTML = '<span class="action-icon">' + (d.liked ? '❤️' : '🤍') + '</span> <span>' + d.likeCount + ' Likes</span>';
+        }
+    } catch (e) { }
 }
 
 async function toggleComments(id) {
-    const s=document.getElementById('comments-'+id);
-    if(s.classList.contains('open')){s.classList.remove('open');return;}
+    const s = document.getElementById('comments-' + id);
+    if (s.classList.contains('open')) { s.classList.remove('open'); return; }
     s.classList.add('open');
-    try{const r=await fetch(API_BASE+'/api/posts/'+id+'/comments');const d=await r.json();const l=document.getElementById('comments-list-'+id);if(!d.comments.length){l.innerHTML='<p style="font-size:0.85rem;color:#999;margin-bottom:10px;">No comments yet.</p>';}else{l.innerHTML=d.comments.map(c=>{const ac=getAvatarColor(c.fullName);return '<div class="comment-item"><div class="comment-avatar" style="background:'+ac.bg+';color:'+ac.color+';">'+getInitials(c.fullName)+'</div><div style="font-size:0.85rem;"><strong>'+c.fullName+'</strong> '+c.content+'</div></div>';}).join('');}}catch(e){}
+    try {
+        const r = await fetch(API_BASE + '/api/posts/' + id + '/comments');
+        const d = await r.json();
+        const l = document.getElementById('comments-list-' + id);
+        if (!d.comments.length) {
+            l.innerHTML = '<p style="font-size:0.9rem;color:' + 'var(--text-light)' + ';margin-bottom:12px;">No comments yet. Be the first! 💬</p>';
+        } else {
+            l.innerHTML = d.comments.map(c => {
+                const ac = getAvatarColor(c.fullName);
+                return '<div class="comment-item"><div class="comment-avatar" style="background:' + ac.bg + ';color:' + ac.color + ';">' + getInitials(c.fullName) + '</div><div class="comment-text"><strong>' + c.fullName + '</strong> ' + c.content + '</div></div>';
+            }).join('');
+        }
+    } catch (e) { }
 }
 
 async function addComment(id) {
-    if(!token){showToast('Login to comment.','error');return;}
-    const inp=document.getElementById('comment-input-'+id);const c=inp.value.trim();if(!c)return;
-    try{const r=await fetch(API_BASE+'/api/posts/'+id+'/comments',{method:'POST',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({content:c})});if(r.ok){inp.value='';toggleComments(id);setTimeout(()=>toggleComments(id),100);showToast('Comment added!');}}catch(e){}
+    if (!token) { showToast('Login to comment.', 'error'); return; }
+    const inp = document.getElementById('comment-input-' + id);
+    const c = inp.value.trim();
+    if (!c) return;
+    try {
+        const r = await fetch(API_BASE + '/api/posts/' + id + '/comments', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: c })
+        });
+        if (r.ok) {
+            inp.value = '';
+            toggleComments(id);
+            setTimeout(() => toggleComments(id), 150);
+            showToast('Comment added! 💬');
+        }
+    } catch (e) { }
 }
 
-function sharePost(id){if(navigator.clipboard){navigator.clipboard.writeText(window.location.origin+'/community.html#post-'+id);showToast('Link copied!');}else{showToast('Share this page URL.');}}
+function sharePost(id) {
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(window.location.origin + '/community.html#post-' + id);
+        showToast('Link copied! Share it with friends 🔗');
+    } else {
+        showToast('Share this page URL with your friends.');
+    }
+}
 
 async function loadMentors() {
-    try{const r=await fetch(API_BASE+'/api/posts/mentors/all');const d=await r.json();document.getElementById('mentors-list').innerHTML=d.mentors.map(m=>'<div class="mentor-item"><div class="avatar" style="width:40px;height:40px;">'+m.icon+'</div><div><div style="font-weight:bold;font-size:0.9rem;">'+m.name+'</div><span class="mentor-badge">'+m.specialty+'</span></div></div>').join('');}catch(e){}
+    try {
+        const r = await fetch(API_BASE + '/api/posts/mentors/all');
+        const d = await r.json();
+        document.getElementById('mentors-list').innerHTML = d.mentors.map(m =>
+            '<div class="mentor-item">' +
+            '<div class="mentor-avatar">' + m.icon + '</div>' +
+            '<div><div class="mentor-name">' + m.name + '</div>' +
+            '<span class="mentor-badge">' + m.specialty + '</span></div></div>'
+        ).join('');
+    } catch (e) { }
 }
 
 loadPosts(); loadMentors();
