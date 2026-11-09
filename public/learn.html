@@ -552,7 +552,7 @@
 
 <script>
 const API_BASE = window.API_BASE !== undefined ? window.API_BASE : '';
-const token = localStorage.getItem('empowerher_token');
+const token = window.getAuthToken ? window.getAuthToken() : (sessionStorage.getItem('empowerher_token') || localStorage.getItem('empowerher_token'));
 if (token) {
     document.getElementById('logout-btn').style.display = 'inline-block';
     const mobileLogout = document.getElementById('mobile-logout-btn');
@@ -566,7 +566,14 @@ function toggleMenu() {
     btn.classList.toggle('active');
 }
 
-function logout() { localStorage.removeItem('empowerher_token'); localStorage.removeItem('empowerher_user'); window.location.href = 'index.html'; }
+function logout() {
+    if (window.clearUserAuth) window.clearUserAuth();
+    else {
+        localStorage.removeItem('empowerher_token'); localStorage.removeItem('empowerher_user');
+        sessionStorage.removeItem('empowerher_token'); sessionStorage.removeItem('empowerher_user');
+    }
+    window.location.href = 'index.html';
+}
 function showToast(msg, type='success') {
     const t = document.getElementById('toast');
     t.textContent = (type === 'success' ? '✅ ' : '⚠️ ') + msg;

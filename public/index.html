@@ -456,6 +456,20 @@
 
         <div id="form-message" class="message"></div>
 
+        <!-- Active Session Banner (allows choosing to continue or switch accounts) -->
+        <div id="active-session-banner" style="display: none; background: #e0f2f1; border: 1.5px solid var(--primary); padding: 12px 14px; border-radius: 12px; margin-bottom: 1.25rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                <div>
+                    <div style="font-size: 0.75rem; color: var(--text-light); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Active Session</div>
+                    <div id="active-user-display" style="font-weight: 800; color: var(--primary-dark); font-size: 0.95rem;">User</div>
+                </div>
+                <div style="display: flex; gap: 6px;">
+                    <a href="dashboard.html" style="background: var(--primary); color: white; padding: 6px 12px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 0.82rem;">Dashboard →</a>
+                    <button type="button" onclick="switchAccount()" style="background: white; border: 1px solid var(--primary); color: var(--primary); padding: 6px 10px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer;">Switch Account</button>
+                </div>
+            </div>
+        </div>
+
         <div class="tabs">
             <div class="tab active" onclick="switchTab('login')" id="tab-login">🔑 Login</div>
             <div class="tab" onclick="switchTab('signup')" id="tab-signup">✨ Sign Up</div>
@@ -481,7 +495,11 @@
                     <input type="password" id="input-password" placeholder="Enter your password" required />
                     <button type="button" class="password-toggle" onclick="togglePassword()" aria-label="Show Password" id="pwd-toggle">👁️</button>
                 </div>
-                <div style="text-align: right; margin-top: 8px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px; margin-bottom: 6px; font-size: 0.9rem;">
+                    <label style="display: inline-flex; align-items: center; gap: 7px; cursor: pointer; color: var(--text); user-select: none;">
+                        <input type="checkbox" id="remember-me" checked style="width: 17px; height: 17px; accent-color: var(--primary); cursor: pointer;">
+                        <span style="font-size: 0.88rem; font-weight: 600;">Keep me signed in</span>
+                    </label>
                     <a href="#" class="forgot-link">Forgot Password?</a>
                 </div>
             </div>
@@ -516,10 +534,27 @@
     // --- API Base URL (configured via config.js) ---
     const API_BASE = window.API_BASE !== undefined ? window.API_BASE : '';
 
-    // --- Check if already logged in ---
-    const existingToken = localStorage.getItem('empowerher_token');
-    if (existingToken) {
-        window.location.href = 'dashboard.html';
+    // --- Check active session without aggressive forced redirect ---
+    function checkActiveSession() {
+        const token = window.getAuthToken ? window.getAuthToken() : (sessionStorage.getItem('empowerher_token') || localStorage.getItem('empowerher_token'));
+        const user = window.getAuthUser ? window.getAuthUser() : null;
+        const banner = document.getElementById('active-session-banner');
+        const display = document.getElementById('active-user-display');
+        if (token && banner && display) {
+            display.textContent = user ? (user.fullName || user.mobile || 'User') : 'Signed-in User';
+            banner.style.display = 'block';
+        }
+    }
+    checkActiveSession();
+
+    function switchAccount() {
+        if (window.clearUserAuth) window.clearUserAuth();
+        else {
+            localStorage.removeItem('empowerher_token'); localStorage.removeItem('empowerher_user');
+            sessionStorage.removeItem('empowerher_token'); sessionStorage.removeItem('empowerher_user');
+        }
+        document.getElementById('active-session-banner').style.display = 'none';
+        showMessage('Switched out of current session. Enter another ID below to log in.', 'success');
     }
 
     // --- DOM Elements ---
@@ -605,8 +640,13 @@
                     return;
                 }
 
-                localStorage.setItem('empowerher_token', data.token);
-                localStorage.setItem('empowerher_user', JSON.stringify(data.user));
+                const remember = document.getElementById('remember-me') ? document.getElementById('remember-me').checked : true;
+                if (window.setAuthSession) {
+                    window.setAuthSession(data.token, data.user, remember);
+                } else {
+                    localStorage.setItem('empowerher_token', data.token);
+                    localStorage.setItem('empowerher_user', JSON.stringify(data.user));
+                }
                 showMessage('Account created! Taking you to your dashboard...', 'success');
                 setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
 
@@ -624,8 +664,13 @@
                     return;
                 }
 
-                localStorage.setItem('empowerher_token', data.token);
-                localStorage.setItem('empowerher_user', JSON.stringify(data.user));
+                const remember = document.getElementById('remember-me') ? document.getElementById('remember-me').checked : true;
+                if (window.setAuthSession) {
+                    window.setAuthSession(data.token, data.user, remember);
+                } else {
+                    localStorage.setItem('empowerher_token', data.token);
+                    localStorage.setItem('empowerher_user', JSON.stringify(data.user));
+                }
                 showMessage('Welcome back! Taking you home...', 'success');
                 setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
             }
@@ -654,8 +699,13 @@
                 return;
             }
 
-            localStorage.setItem('empowerher_token', data.token);
-            localStorage.setItem('empowerher_user', JSON.stringify(data.user));
+            const remember = document.getElementById('remember-me') ? document.getElementById('remember-me').checked : true;
+            if (window.setAuthSession) {
+                window.setAuthSession(data.token, data.user, remember);
+            } else {
+                localStorage.setItem('empowerher_token', data.token);
+                localStorage.setItem('empowerher_user', JSON.stringify(data.user));
+            }
             showMessage('Google login successful! Taking you home...', 'success');
             setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
         } catch (err) {

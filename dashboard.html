@@ -1173,7 +1173,7 @@
 
 <script>
     const API_BASE = window.API_BASE !== undefined ? window.API_BASE : '';
-    const token = localStorage.getItem('empowerher_token');
+    const token = window.getAuthToken ? window.getAuthToken() : (sessionStorage.getItem('empowerher_token') || localStorage.getItem('empowerher_token'));
     let currentUserData = null;
     let userSkillsList = [];
 
@@ -1219,8 +1219,11 @@
 
             if (!res.ok) {
                 if (res.status === 401 || res.status === 403) {
-                    localStorage.removeItem('empowerher_token');
-                    localStorage.removeItem('empowerher_user');
+                    if (window.clearUserAuth) window.clearUserAuth();
+                    else {
+                        localStorage.removeItem('empowerher_token'); localStorage.removeItem('empowerher_user');
+                        sessionStorage.removeItem('empowerher_token'); sessionStorage.removeItem('empowerher_user');
+                    }
                 }
                 return;
             }
@@ -1470,8 +1473,11 @@
     }
 
     function logout() {
-        localStorage.removeItem('empowerher_token');
-        localStorage.removeItem('empowerher_user');
+        if (window.clearUserAuth) window.clearUserAuth();
+        else {
+            localStorage.removeItem('empowerher_token'); localStorage.removeItem('empowerher_user');
+            sessionStorage.removeItem('empowerher_token'); sessionStorage.removeItem('empowerher_user');
+        }
         window.location.href = 'index.html';
     }
 

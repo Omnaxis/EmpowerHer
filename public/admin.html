@@ -693,6 +693,12 @@
                 <label>Password</label>
                 <input type="password" id="login-password" placeholder="Enter your password">
             </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; font-size: 0.9rem;">
+                <label style="display: inline-flex; align-items: center; gap: 7px; cursor: pointer; color: var(--text); user-select: none;">
+                    <input type="checkbox" id="admin-remember-me" checked style="width: 17px; height: 17px; accent-color: var(--primary); cursor: pointer;">
+                    <span style="font-size: 0.88rem; font-weight: 600;">Keep me signed in</span>
+                </label>
+            </div>
             <button class="login-btn" id="login-btn" onclick="handleLogin()">🔑 Sign In</button>
         </div>
     </div>
@@ -1106,13 +1112,30 @@
     let appsPage = 1;
     let confirmCallback = null;
 
-    // ─── AUTH HELPERS ───
-    function getToken() { return localStorage.getItem('adminToken'); }
-    function setToken(t) { localStorage.setItem('adminToken', t); }
-    function clearAuth() { localStorage.removeItem('adminToken'); localStorage.removeItem('adminUser'); }
+    // ─── AUTH HELPERS (Tab-isolated + Persistent session support) ───
+    function getToken() {
+        return window.getAdminToken ? window.getAdminToken() : (sessionStorage.getItem('adminToken') || localStorage.getItem('adminToken'));
+    }
+    function setToken(t, user, remember = true) {
+        if (window.setAdminSession) {
+            window.setAdminSession(t, user, remember);
+        } else {
+            const storage = remember ? localStorage : sessionStorage;
+            storage.setItem('adminToken', t);
+            storage.setItem('adminUser', JSON.stringify(user));
+        }
+    }
+    function clearAuth() {
+        if (window.clearAdminAuth) {
+            window.clearAdminAuth();
+        } else {
+            localStorage.removeItem('adminToken'); localStorage.removeItem('adminUser');
+            sessionStorage.removeItem('adminToken'); sessionStorage.removeItem('adminUser');
+        }
+    }
 
     function getAdminUser() {
-        try { return JSON.parse(localStorage.getItem('adminUser')); } catch { return null; }
+        return window.getAdminUser ? window.getAdminUser() : JSON.parse(sessionStorage.getItem('adminUser') || localStorage.getItem('adminUser') || 'null');
     }
 
     async function apiFetch(url, opts = {}) {
@@ -1188,8 +1211,8 @@
             const res = await fetch(`${API}/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ adminId, password }) });
             const data = await res.json();
             if (!res.ok) { errEl.textContent = data.error || 'Login failed.'; errEl.style.display = 'block'; return; }
-            setToken(data.token);
-            localStorage.setItem('adminUser', JSON.stringify(data.admin));
+            const remember = document.getElementById('admin-remember-me') ? document.getElementById('admin-remember-me').checked : true;
+            setToken(data.token, data.admin, remember);
             currentAdmin = data.admin;
             showAdminLayout();
         } catch (err) { errEl.textContent = 'Network error. Please try again.'; errEl.style.display = 'block'; }
