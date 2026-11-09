@@ -49,8 +49,12 @@ async function start() {
   }
 
   // Auto-seed super admin
-  const seedAdmin = require('./db/seedAdmin');
-  await seedAdmin();
+  try {
+    const seedAdmin = require('./db/seedAdmin');
+    await seedAdmin();
+  } catch (err) {
+    console.warn('⚠️ Super admin auto-seed notice:', err.message);
+  }
 
   app.listen(PORT, () => {
     console.log(`\n🚀 EmpowerHer server running at http://localhost:${PORT}`);
