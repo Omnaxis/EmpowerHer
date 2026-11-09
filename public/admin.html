@@ -689,15 +689,9 @@
                 <label>Admin ID</label>
                 <input type="text" id="login-id" placeholder="Enter your Admin ID" autocomplete="off">
             </div>
-            <div class="login-field">
+            <div class="login-field" style="margin-bottom: 1.5rem;">
                 <label>Password</label>
                 <input type="password" id="login-password" placeholder="Enter your password" autocomplete="new-password">
-            </div>
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; font-size: 0.9rem;">
-                <label style="display: inline-flex; align-items: center; gap: 7px; cursor: pointer; color: var(--text); user-select: none;">
-                    <input type="checkbox" id="admin-remember-me" checked style="width: 17px; height: 17px; accent-color: var(--primary); cursor: pointer;">
-                    <span style="font-size: 0.88rem; font-weight: 600;">Keep me signed in</span>
-                </label>
             </div>
             <button class="login-btn" id="login-btn" onclick="handleLogin()">🔑 Sign In</button>
         </div>
@@ -1215,8 +1209,7 @@
             const res = await fetch(`${API}/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ adminId, password }) });
             const data = await res.json();
             if (!res.ok) { errEl.textContent = data.error || 'Login failed.'; errEl.style.display = 'block'; return; }
-            const remember = document.getElementById('admin-remember-me') ? document.getElementById('admin-remember-me').checked : true;
-            setToken(data.token, data.admin, remember);
+            setToken(data.token, data.admin, true);
             currentAdmin = data.admin;
 
             // Wipe entered credentials completely from memory and DOM inputs
