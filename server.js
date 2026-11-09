@@ -19,6 +19,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/jobs', require('./routes/jobs'));
 app.use('/api/posts', require('./routes/community'));
 app.use('/api/courses', require('./routes/learn'));
+app.use('/api/admin', require('./routes/admin'));
 
 // --- Health check ---
 app.get('/api/health', (req, res) => {
@@ -47,10 +48,15 @@ async function start() {
     await seed();
   }
 
+  // Auto-seed super admin
+  const seedAdmin = require('./db/seedAdmin');
+  await seedAdmin();
+
   app.listen(PORT, () => {
     console.log(`\n🚀 EmpowerHer server running at http://localhost:${PORT}`);
     console.log(`📡 API available at http://localhost:${PORT}/api`);
-    console.log(`🌐 Frontend at http://localhost:${PORT}/index.html\n`);
+    console.log(`🌐 Frontend at http://localhost:${PORT}/index.html`);
+    console.log(`🔐 Admin Portal at http://localhost:${PORT}/admin.html\n`);
   });
 }
 

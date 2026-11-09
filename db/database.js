@@ -130,6 +130,27 @@ async function initDb() {
     )
   `;
 
+  await sql`
+    CREATE TABLE IF NOT EXISTS admins (
+      id SERIAL PRIMARY KEY,
+      "adminId" TEXT UNIQUE NOT NULL,
+      password TEXT NOT NULL,
+      role TEXT NOT NULL DEFAULT 'admin',
+      "createdBy" INTEGER REFERENCES admins(id),
+      "createdAt" TIMESTAMP DEFAULT NOW()
+    )
+  `;
+
+  // Add banned column to users if not exists
+  await sql`
+    DO $$ 
+    BEGIN 
+      IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='banned') THEN
+        ALTER TABLE users ADD COLUMN banned BOOLEAN DEFAULT false;
+      END IF;
+    END $$
+  `;
+
   console.log('✅ All database tables initialized');
 }
 

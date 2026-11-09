@@ -50,6 +50,8 @@ router.post('/login', async (req, res) => {
     const valid = bcrypt.compareSync(password, user.password);
     if (!valid) return res.status(401).json({ error: 'Incorrect password.' });
 
+    if (user.banned) return res.status(403).json({ error: 'Your account has been suspended. Contact support for assistance.' });
+
     const token = generateToken(user);
     res.json({ message: 'Login successful!', token, user: { id: user.id, fullName: user.fullName, mobile: user.mobile, profileCompletion: user.profileCompletion } });
   } catch (err) { console.error('Login error:', err); res.status(500).json({ error: 'Server error during login.' }); }
@@ -76,6 +78,8 @@ router.post('/google', async (req, res) => {
       await query('UPDATE users SET "googleId" = $1, avatar = $2 WHERE id = $3', [googleId, picture || '', user.id]);
       user = await queryOne('SELECT * FROM users WHERE id = $1', [user.id]);
     }
+
+    if (user.banned) return res.status(403).json({ error: 'Your account has been suspended. Contact support for assistance.' });
 
     const token = generateToken(user);
     res.json({ message: 'Google login successful!', token, user: { id: user.id, fullName: user.fullName, email: user.email, avatar: user.avatar, profileCompletion: user.profileCompletion } });
