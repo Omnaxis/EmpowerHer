@@ -1171,7 +1171,11 @@
         document.getElementById('confirm-message').textContent = message;
         document.getElementById('confirm-overlay').classList.add('active');
         confirmCallback = callback;
-        document.getElementById('confirm-action-btn').onclick = () => { closeConfirm(); if (confirmCallback) confirmCallback(); };
+        document.getElementById('confirm-action-btn').onclick = () => {
+            const cb = confirmCallback;
+            closeConfirm();
+            if (cb) cb();
+        };
     }
     function closeConfirm() {
         document.getElementById('confirm-overlay').classList.remove('active');

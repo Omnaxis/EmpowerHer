@@ -605,6 +605,10 @@ router.delete('/admins/:id', authenticateAdmin, requireSuperAdmin, async (req, r
       return res.status(403).json({ error: 'Cannot delete a super admin account.' });
     }
 
+    // Unlink any foreign key dependencies where this admin created other records
+    await query('UPDATE admins SET "createdBy" = NULL WHERE "createdBy" = $1', [adminId]);
+    await query('UPDATE admin_logs SET "adminRefId" = NULL WHERE "adminRefId" = $1', [adminId]);
+
     await query('DELETE FROM admins WHERE id = $1', [adminId]);
 
     await logAdminAction(req.admin, 'DELETE_ADMIN', 'admin', adminId, `Deleted admin "${target.adminId}" (ID: #${adminId})`);
