@@ -52,6 +52,8 @@ router.post('/login', async (req, res) => {
 
     if (user.banned) return res.status(403).json({ error: 'Your account has been suspended. Contact support for assistance.' });
 
+    await query('UPDATE users SET "lastLogin" = NOW() WHERE id = $1', [user.id]);
+
     const token = generateToken(user);
     res.json({ message: 'Login successful!', token, user: { id: user.id, fullName: user.fullName, mobile: user.mobile, profileCompletion: user.profileCompletion } });
   } catch (err) { console.error('Login error:', err); res.status(500).json({ error: 'Server error during login.' }); }
@@ -80,6 +82,8 @@ router.post('/google', async (req, res) => {
     }
 
     if (user.banned) return res.status(403).json({ error: 'Your account has been suspended. Contact support for assistance.' });
+
+    await query('UPDATE users SET "lastLogin" = NOW() WHERE id = $1', [user.id]);
 
     const token = generateToken(user);
     res.json({ message: 'Google login successful!', token, user: { id: user.id, fullName: user.fullName, email: user.email, avatar: user.avatar, profileCompletion: user.profileCompletion } });

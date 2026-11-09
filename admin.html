@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --primary: #2A9D8F;
@@ -223,6 +224,30 @@
             animation: fadeInUp 0.4s ease both;
         }
         .stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+        .stat-card.clickable {
+            cursor: pointer;
+            position: relative;
+        }
+        .stat-card.clickable:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 28px rgba(42, 157, 143, 0.15);
+        }
+        .stat-card-hint {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-top: 0.8rem;
+            opacity: 0.7;
+            transition: var(--transition);
+        }
+        .stat-card.clickable:hover .stat-card-hint {
+            opacity: 1;
+            transform: translateX(4px);
+            color: var(--secondary);
+        }
         .stat-card-icon { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
         .stat-card-value { font-size: 2rem; font-weight: 800; color: var(--text); }
         .stat-card-label { font-size: 0.85rem; color: var(--text-light); font-weight: 600; }
@@ -232,6 +257,80 @@
         .stat-card:nth-child(4) { border-top: 3px solid var(--pink); }
         .stat-card:nth-child(5) { border-top: 3px solid var(--lavender); }
         .stat-card:nth-child(6) { border-top: 3px solid var(--danger); }
+
+        /* ═══ TODAY HIGHLIGHTS ═══ */
+        .today-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.8rem;
+        }
+        .today-card {
+            background: linear-gradient(135deg, #ffffff 0%, #fdfdfd 100%);
+            border-radius: var(--radius);
+            padding: 1.2rem 1.4rem;
+            box-shadow: var(--shadow);
+            border-left: 5px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: var(--transition);
+        }
+        .today-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+        .today-card.orange { border-left-color: var(--secondary); }
+        .today-card.yellow { border-left-color: var(--accent); }
+        .today-card.purple { border-left-color: #9b59b6; }
+        .today-card-val { font-size: 1.9rem; font-weight: 800; color: var(--text); line-height: 1.2; }
+        .today-card-lbl { font-size: 0.8rem; color: var(--text-light); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .today-card-sub { font-size: 0.75rem; color: var(--text-light); margin-top: 3px; }
+        .today-card-icon { font-size: 2.2rem; opacity: 0.85; }
+
+        /* ═══ CHARTS ═══ */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1.2fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .chart-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+        .chart-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+        }
+        .chart-card-header h3 { font-size: 1.05rem; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 8px; }
+        .chart-canvas-wrapper { position: relative; width: 100%; height: 260px; }
+
+        /* ═══ DASHBOARD ACTIVITIES ═══ */
+        .activity-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .activity-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .activity-header h3 { font-size: 1.05rem; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 8px; }
+        .activity-link { font-size: 0.85rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 4px; transition: var(--transition); cursor: pointer; }
+        .activity-link:hover { color: var(--secondary); transform: translateX(3px); }
 
         /* ═══ SECTION / PANEL ═══ */
         .section-panel { display: none; animation: fadeIn 0.4s ease; }
@@ -533,6 +632,9 @@
         }
 
         /* ═══ RESPONSIVE ═══ */
+        @media (max-width: 992px) {
+            .charts-grid, .activity-grid { grid-template-columns: 1fr; }
+        }
         @media (max-width: 768px) {
             .sidebar { transform: translateX(-100%); }
             .sidebar.open { transform: translateX(0); }
@@ -636,13 +738,161 @@
 
             <!-- DASHBOARD -->
             <div class="section-panel active" id="panel-dashboard">
+                <!-- Today Highlights -->
+                <div class="today-grid">
+                    <div class="today-card">
+                        <div>
+                            <div class="today-card-lbl">Logins Today</div>
+                            <div class="today-card-val" id="today-logins">0</div>
+                            <div class="today-card-sub">Active homepreneurs today</div>
+                        </div>
+                        <div class="today-card-icon">⚡</div>
+                    </div>
+                    <div class="today-card orange">
+                        <div>
+                            <div class="today-card-lbl">New Signups Today</div>
+                            <div class="today-card-val" id="today-users">0</div>
+                            <div class="today-card-sub">New accounts created today</div>
+                        </div>
+                        <div class="today-card-icon">✨</div>
+                    </div>
+                    <div class="today-card yellow">
+                        <div>
+                            <div class="today-card-lbl">Applications Today</div>
+                            <div class="today-card-val" id="today-apps">0</div>
+                            <div class="today-card-sub">Job applications submitted</div>
+                        </div>
+                        <div class="today-card-icon">💼</div>
+                    </div>
+                    <div class="today-card purple">
+                        <div>
+                            <div class="today-card-lbl">Active Users Rate</div>
+                            <div class="today-card-val" id="active-rate">100%</div>
+                            <div class="today-card-sub">Non-banned platform users</div>
+                        </div>
+                        <div class="today-card-icon">🛡️</div>
+                    </div>
+                </div>
+
+                <!-- Clickable Overall Stat Cards -->
                 <div class="stats-grid" id="stats-grid">
-                    <div class="stat-card"><span class="stat-card-icon">👥</span><div class="stat-card-value" id="stat-users">—</div><div class="stat-card-label">Total Users</div></div>
-                    <div class="stat-card"><span class="stat-card-icon">💼</span><div class="stat-card-value" id="stat-jobs">—</div><div class="stat-card-label">Total Jobs</div></div>
-                    <div class="stat-card"><span class="stat-card-icon">📋</span><div class="stat-card-value" id="stat-applications">—</div><div class="stat-card-label">Applications</div></div>
-                    <div class="stat-card"><span class="stat-card-icon">💬</span><div class="stat-card-value" id="stat-posts">—</div><div class="stat-card-label">Community Posts</div></div>
-                    <div class="stat-card"><span class="stat-card-icon">📚</span><div class="stat-card-value" id="stat-courses">—</div><div class="stat-card-label">Courses</div></div>
-                    <div class="stat-card"><span class="stat-card-icon">🚫</span><div class="stat-card-value" id="stat-banned">—</div><div class="stat-card-label">Banned Users</div></div>
+                    <div class="stat-card clickable" onclick="switchSection('users')">
+                        <span class="stat-card-icon">👥</span>
+                        <div class="stat-card-value" id="stat-users">—</div>
+                        <div class="stat-card-label">Total Users</div>
+                        <div class="stat-card-hint">Open Users →</div>
+                    </div>
+                    <div class="stat-card clickable" onclick="switchSection('jobs')">
+                        <span class="stat-card-icon">💼</span>
+                        <div class="stat-card-value" id="stat-jobs">—</div>
+                        <div class="stat-card-label">Total Jobs</div>
+                        <div class="stat-card-hint">Open Jobs →</div>
+                    </div>
+                    <div class="stat-card clickable" onclick="switchSection('applications')">
+                        <span class="stat-card-icon">📋</span>
+                        <div class="stat-card-value" id="stat-applications">—</div>
+                        <div class="stat-card-label">Applications</div>
+                        <div class="stat-card-hint">Open Applications →</div>
+                    </div>
+                    <div class="stat-card clickable" onclick="switchSection('posts')">
+                        <span class="stat-card-icon">💬</span>
+                        <div class="stat-card-value" id="stat-posts">—</div>
+                        <div class="stat-card-label">Community Posts</div>
+                        <div class="stat-card-hint">Open Posts →</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-card-icon">📚</span>
+                        <div class="stat-card-value" id="stat-courses">—</div>
+                        <div class="stat-card-label">Learning Modules</div>
+                        <div class="stat-card-hint" style="opacity:0.4;">Platform Courses</div>
+                    </div>
+                    <div class="stat-card clickable" onclick="switchSection('users'); filterUsersBanned();">
+                        <span class="stat-card-icon">🚫</span>
+                        <div class="stat-card-value" id="stat-banned">—</div>
+                        <div class="stat-card-label">Banned Users</div>
+                        <div class="stat-card-hint">Inspect Banned →</div>
+                    </div>
+                </div>
+
+                <!-- Graphs Section -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <h3>📈 Registrations & Applications (Last 7 Days)</h3>
+                        </div>
+                        <div class="chart-canvas-wrapper">
+                            <canvas id="trendChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <h3>🎯 Application Status Breakdown</h3>
+                        </div>
+                        <div class="chart-canvas-wrapper">
+                            <canvas id="statusChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activities Section -->
+                <div class="activity-grid">
+                    <!-- Recent Users Table -->
+                    <div class="activity-card">
+                        <div class="activity-header">
+                            <h3>👥 Recent New Users</h3>
+                            <a href="#" onclick="switchSection('users')" class="activity-link">View all users →</a>
+                        </div>
+                        <div class="table-overflow">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Contact</th>
+                                        <th>Skills</th>
+                                        <th>Registered</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dash-recent-users-tbody">
+                                    <tr><td colspan="5" style="text-align:center;color:var(--text-light);padding:1.5rem;">Loading recent users...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Recent Applications Table -->
+                    <div class="activity-card">
+                        <div class="activity-header">
+                            <h3>📋 Recent Job Applications</h3>
+                            <a href="#" onclick="switchSection('applications')" class="activity-link">View all applications →</a>
+                        </div>
+                        <div class="table-overflow">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Applicant</th>
+                                        <th>Job Title</th>
+                                        <th>Status</th>
+                                        <th>Applied</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dash-recent-apps-tbody">
+                                    <tr><td colspan="4" style="text-align:center;color:var(--text-light);padding:1.5rem;">Loading recent applications...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Community Updates -->
+                <div class="activity-card" style="margin-bottom:2rem;">
+                    <div class="activity-header">
+                        <h3>💬 Latest Community Updates</h3>
+                        <a href="#" onclick="switchSection('posts')" class="activity-link">View all posts →</a>
+                    </div>
+                    <div id="dash-recent-posts-list" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1rem;">
+                        <div style="color:var(--text-light);padding:1rem;">Loading posts...</div>
+                    </div>
                 </div>
             </div>
 
@@ -961,16 +1211,190 @@
     }
 
     // ─── DASHBOARD ───
+    let trendChartInstance = null;
+    let statusChartInstance = null;
+
+    function filterUsersBanned() {
+        const searchInput = document.getElementById('users-search');
+        if (searchInput) searchInput.value = '';
+        loadUsers(1);
+    }
+
+    function renderCharts(trends, statusBreakdown) {
+        if (typeof Chart === 'undefined') return;
+
+        // 1. Line/Area Chart for Trends
+        const trendCanvas = document.getElementById('trendChart');
+        if (trendCanvas) {
+            if (trendChartInstance) trendChartInstance.destroy();
+            const labels = (trends || []).map(t => t.label);
+            const usersData = (trends || []).map(t => t.users);
+            const appsData = (trends || []).map(t => t.applications);
+
+            trendChartInstance = new Chart(trendCanvas, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            label: 'New Registrations',
+                            data: usersData,
+                            borderColor: '#2A9D8F',
+                            backgroundColor: 'rgba(42, 157, 143, 0.12)',
+                            fill: true,
+                            tension: 0.35,
+                            pointBackgroundColor: '#2A9D8F',
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        },
+                        {
+                            label: 'Job Applications',
+                            data: appsData,
+                            borderColor: '#E76F51',
+                            backgroundColor: 'rgba(231, 111, 81, 0.12)',
+                            fill: true,
+                            tension: 0.35,
+                            pointBackgroundColor: '#E76F51',
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top', labels: { boxWidth: 12, font: { family: 'Nunito', weight: '700' } } }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1, precision: 0, font: { family: 'Nunito' } },
+                            grid: { color: 'rgba(0,0,0,0.04)' }
+                        },
+                        x: {
+                            ticks: { font: { family: 'Nunito' } },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 2. Status Doughnut Chart
+        const statusCanvas = document.getElementById('statusChart');
+        if (statusCanvas) {
+            if (statusChartInstance) statusChartInstance.destroy();
+            const pending = statusBreakdown?.pending || 0;
+            const approved = statusBreakdown?.approved || 0;
+            const rejected = statusBreakdown?.rejected || 0;
+            const hasData = (pending + approved + rejected) > 0;
+
+            statusChartInstance = new Chart(statusCanvas, {
+                type: 'doughnut',
+                data: {
+                    labels: hasData ? ['Pending', 'Approved', 'Rejected'] : ['No Data'],
+                    datasets: [{
+                        data: hasData ? [pending, approved, rejected] : [1],
+                        backgroundColor: hasData ? ['#f39c12', '#27ae60', '#e74c3c'] : ['#e0e0e0'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, font: { family: 'Nunito', weight: '700' } } }
+                    },
+                    cutout: '68%'
+                }
+            });
+        }
+    }
+
     async function loadDashboard() {
         try {
             const res = await apiFetch(`${API}/dashboard/stats`);
             const data = await res.json();
-            document.getElementById('stat-users').textContent = data.totalUsers;
-            document.getElementById('stat-jobs').textContent = data.totalJobs;
-            document.getElementById('stat-applications').textContent = data.totalApplications;
-            document.getElementById('stat-posts').textContent = data.totalPosts;
-            document.getElementById('stat-courses').textContent = data.totalCourses;
-            document.getElementById('stat-banned').textContent = data.bannedUsers;
+
+            // Overall stats
+            document.getElementById('stat-users').textContent = data.totalUsers ?? 0;
+            document.getElementById('stat-jobs').textContent = data.totalJobs ?? 0;
+            document.getElementById('stat-applications').textContent = data.totalApplications ?? 0;
+            document.getElementById('stat-posts').textContent = data.totalPosts ?? 0;
+            document.getElementById('stat-courses').textContent = data.totalCourses ?? 0;
+            document.getElementById('stat-banned').textContent = data.bannedUsers ?? 0;
+
+            // Today Highlights
+            document.getElementById('today-logins').textContent = data.loginsToday ?? 0;
+            document.getElementById('today-users').textContent = data.newUsersToday ?? 0;
+            document.getElementById('today-apps').textContent = data.applicationsToday ?? 0;
+            const activeUsers = (data.totalUsers || 0) - (data.bannedUsers || 0);
+            const activeRate = (data.totalUsers || 0) > 0 ? Math.round((activeUsers / data.totalUsers) * 100) : 100;
+            document.getElementById('active-rate').textContent = `${activeRate}%`;
+
+            // Graphs
+            renderCharts(data.chartTrends || [], data.statusBreakdown || {});
+
+            // Recent Users Table
+            const usersTbody = document.getElementById('dash-recent-users-tbody');
+            if (usersTbody) {
+                if (!data.recentUsers || !data.recentUsers.length) {
+                    usersTbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-light);padding:1.5rem;">No registered users yet</td></tr>';
+                } else {
+                    usersTbody.innerHTML = data.recentUsers.map(u => `
+                        <tr>
+                            <td><strong>${escapeHtml(u.fullName)}</strong></td>
+                            <td>${escapeHtml(u.mobile || u.email || '—')}</td>
+                            <td>${escapeHtml(u.skills) || '—'}</td>
+                            <td>${formatDate(u.createdAt)}</td>
+                            <td><button class="btn btn-sm btn-outline" onclick="viewUser(${u.id})">👁 View</button></td>
+                        </tr>
+                    `).join('');
+                }
+            }
+
+            // Recent Applications Table
+            const appsTbody = document.getElementById('dash-recent-apps-tbody');
+            if (appsTbody) {
+                if (!data.recentApplications || !data.recentApplications.length) {
+                    appsTbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-light);padding:1.5rem;">No applications yet</td></tr>';
+                } else {
+                    appsTbody.innerHTML = data.recentApplications.map(a => `
+                        <tr>
+                            <td><strong>${escapeHtml(a.userName)}</strong></td>
+                            <td>${escapeHtml(a.jobTitle)}</td>
+                            <td><span class="badge badge-${a.status}">${a.status}</span></td>
+                            <td>${formatDate(a.appliedAt)}</td>
+                        </tr>
+                    `).join('');
+                }
+            }
+
+            // Recent Posts List
+            const postsList = document.getElementById('dash-recent-posts-list');
+            if (postsList) {
+                if (!data.recentPosts || !data.recentPosts.length) {
+                    postsList.innerHTML = '<div style="color:var(--text-light);padding:1rem;">No community posts yet</div>';
+                } else {
+                    postsList.innerHTML = data.recentPosts.map(p => `
+                        <div style="background:#fafafa;padding:1rem;border-radius:12px;border-left:3px solid var(--primary);">
+                            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                                <strong>${escapeHtml(p.userName)}</strong>
+                                <span style="font-size:0.75rem;color:var(--text-light);">• ${formatDate(p.createdAt)}</span>
+                            </div>
+                            <div style="font-size:0.88rem;color:var(--text);margin-bottom:8px;line-height:1.4;">
+                                ${escapeHtml(p.content.substring(0, 100))}${p.content.length > 100 ? '...' : ''}
+                            </div>
+                            <div style="font-size:0.78rem;color:var(--text-light);font-weight:600;">
+                                ❤️ ${p.likes || 0} likes • 💬 ${p.commentCount || 0} comments
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+
         } catch (err) { console.error('Dashboard load error:', err); }
     }
 

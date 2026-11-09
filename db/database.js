@@ -151,6 +151,16 @@ async function initDb() {
     END $$
   `;
 
+  // Add lastLogin column to users if not exists
+  await sql`
+    DO $$ 
+    BEGIN 
+      IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='lastLogin') THEN
+        ALTER TABLE users ADD COLUMN "lastLogin" TIMESTAMP DEFAULT NOW();
+      END IF;
+    END $$
+  `;
+
   console.log('✅ All database tables initialized');
 }
 

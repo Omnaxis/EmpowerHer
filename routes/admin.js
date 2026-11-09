@@ -47,14 +47,99 @@ router.post('/login', async (req, res) => {
 // ─── GET /dashboard/stats ───────────────────────────────────────
 router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
   try {
-    const [users, jobs, applications, posts, courses, bannedUsers] = await Promise.all([
+    const [
+      users,
+      jobs,
+      applications,
+      posts,
+      courses,
+      bannedUsers,
+      newUsersToday,
+      loginsToday,
+      applicationsToday,
+      appStatusCounts,
+      recentUsers,
+      recentApplications,
+      recentPosts
+    ] = await Promise.all([
       queryOne('SELECT COUNT(*) as count FROM users'),
       queryOne('SELECT COUNT(*) as count FROM jobs'),
       queryOne('SELECT COUNT(*) as count FROM applications'),
       queryOne('SELECT COUNT(*) as count FROM posts'),
       queryOne('SELECT COUNT(*) as count FROM courses'),
-      queryOne('SELECT COUNT(*) as count FROM users WHERE banned = true')
+      queryOne('SELECT COUNT(*) as count FROM users WHERE banned = true'),
+      queryOne('SELECT COUNT(*) as count FROM users WHERE DATE("createdAt") = CURRENT_DATE'),
+      queryOne('SELECT COUNT(*) as count FROM users WHERE DATE("lastLogin") = CURRENT_DATE'),
+      queryOne('SELECT COUNT(*) as count FROM applications WHERE DATE("appliedAt") = CURRENT_DATE'),
+      query('SELECT status, COUNT(*) as count FROM applications GROUP BY status'),
+      query(`
+        SELECT u.id, u."fullName", u.mobile, u.email, u.skills, u."profileCompletion", u.banned, u."createdAt", u."lastLogin",
+               (SELECT COUNT(*) FROM applications WHERE "userId" = u.id) as "applicationCount"
+        FROM users u ORDER BY u."createdAt" DESC LIMIT 5
+      `),
+      query(`
+        SELECT a.id, a.status, a."appliedAt",
+               u.id as "userId", u."fullName" as "userName", u.mobile as "userMobile", u.email as "userEmail",
+               j.id as "jobId", j.title as "jobTitle", j.category as "jobCategory", j.pay as "jobPay"
+        FROM applications a
+        JOIN users u ON u.id = a."userId"
+        JOIN jobs j ON j.id = a."jobId"
+        ORDER BY a."appliedAt" DESC LIMIT 5
+      `),
+      query(`
+        SELECT p.id, p.content, p.likes, p."createdAt",
+               u."fullName" as "userName", u.avatar as "userAvatar",
+               (SELECT COUNT(*) FROM comments WHERE "postId" = p.id) as "commentCount"
+        FROM posts p
+        JOIN users u ON u.id = p."userId"
+        ORDER BY p."createdAt" DESC LIMIT 5
+      `)
     ]);
+
+    // Build 7-day registration and application trends
+    const [userTrends, appTrends] = await Promise.all([
+      query(`
+        SELECT TO_CHAR(DATE("createdAt"), 'YYYY-MM-DD') as day, COUNT(*) as count
+        FROM users
+        WHERE "createdAt" >= CURRENT_DATE - INTERVAL '6 days'
+        GROUP BY DATE("createdAt")
+      `),
+      query(`
+        SELECT TO_CHAR(DATE("appliedAt"), 'YYYY-MM-DD') as day, COUNT(*) as count
+        FROM applications
+        WHERE "appliedAt" >= CURRENT_DATE - INTERVAL '6 days'
+        GROUP BY DATE("appliedAt")
+      `)
+    ]);
+
+    // Normalize last 7 days so days with 0 counts still appear
+    const userMap = {};
+    (userTrends || []).forEach(r => { userMap[r.day] = parseInt(r.count) || 0; });
+    const appMap = {};
+    (appTrends || []).forEach(r => { appMap[r.day] = parseInt(r.count) || 0; });
+
+    const past7Days = [];
+    const today = new Date();
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      const dayStr = d.toISOString().split('T')[0];
+      const label = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      past7Days.push({
+        date: dayStr,
+        label,
+        users: userMap[dayStr] || 0,
+        applications: appMap[dayStr] || 0
+      });
+    }
+
+    // Format app status counts into a nice object { pending: x, approved: y, rejected: z }
+    const statusObj = { pending: 0, approved: 0, rejected: 0 };
+    (appStatusCounts || []).forEach(s => {
+      if (statusObj.hasOwnProperty(s.status)) {
+        statusObj[s.status] = parseInt(s.count) || 0;
+      }
+    });
 
     res.json({
       totalUsers: parseInt(users?.count) || 0,
@@ -62,7 +147,15 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       totalApplications: parseInt(applications?.count) || 0,
       totalPosts: parseInt(posts?.count) || 0,
       totalCourses: parseInt(courses?.count) || 0,
-      bannedUsers: parseInt(bannedUsers?.count) || 0
+      bannedUsers: parseInt(bannedUsers?.count) || 0,
+      newUsersToday: parseInt(newUsersToday?.count) || 0,
+      loginsToday: parseInt(loginsToday?.count) || 0,
+      applicationsToday: parseInt(applicationsToday?.count) || 0,
+      statusBreakdown: statusObj,
+      chartTrends: past7Days,
+      recentUsers: recentUsers || [],
+      recentApplications: recentApplications || [],
+      recentPosts: recentPosts || []
     });
   } catch (err) {
     console.error('Dashboard stats error:', err);
