@@ -63,39 +63,50 @@ app.use((err, req, res, next) => {
 
 // --- Initialize DB and start server ---
 async function start() {
-  const { initDb, queryOne } = require('./db/database');
-
-  // Create all tables
-  await initDb();
-
-  // Auto-seed if empty
-  const result = await queryOne('SELECT COUNT(*) as count FROM jobs');
-  const jobCount = parseInt(result?.count) || 0;
-  if (jobCount === 0) {
-    console.log('📦 First run detected. Seeding database...');
-    const seed = require('./db/seed');
-    await seed();
+  if (!process.env.DATABASE_URL) {
+    console.log('⚡ No DATABASE_URL found. Running in frontend static/proxy mode.');
+    return;
   }
 
-  // Auto-seed super admin
   try {
-    const seedAdmin = require('./db/seedAdmin');
-    await seedAdmin();
-  } catch (err) {
-    console.warn('⚠️ Super admin auto-seed notice:', err.message);
-  }
+    const { initDb, queryOne } = require('./db/database');
 
-  app.listen(PORT, () => {
-    console.log(`\n🚀 EmpowerHer server running at http://localhost:${PORT}`);
-    console.log(`📡 API available at http://localhost:${PORT}/api`);
-    console.log(`🌐 Frontend at http://localhost:${PORT}/index.html`);
-    console.log(`🔐 Admin Portal at http://localhost:${PORT}/admin.html\n`);
-  });
+    // Create all tables
+    await initDb();
+
+    // Auto-seed if empty
+    const result = await queryOne('SELECT COUNT(*) as count FROM jobs');
+    const jobCount = parseInt(result?.count) || 0;
+    if (jobCount === 0) {
+      console.log('📦 First run detected. Seeding database...');
+      const seed = require('./db/seed');
+      await seed();
+    }
+
+    // Auto-seed super admin
+    try {
+      const seedAdmin = require('./db/seedAdmin');
+      await seedAdmin();
+    } catch (err) {
+      console.warn('⚠️ Super admin auto-seed notice:', err.message);
+    }
+  } catch (err) {
+    console.warn('⚠️ Database initialization notice:', err.message);
+  }
 }
 
-start().catch(err => {
-  console.error('Failed to start server:', err);
-  process.exit(1);
-});
+// Only listen on port if not running in a serverless environment (like Vercel)
+if (!process.env.VERCEL) {
+  start().then(() => {
+    app.listen(PORT, () => {
+      console.log(`\n🚀 EmpowerHer server running at http://localhost:${PORT}`);
+      console.log(`📡 API available at http://localhost:${PORT}/api`);
+      console.log(`🌐 Frontend at http://localhost:${PORT}/index.html`);
+      console.log(`🔐 Admin Portal at http://localhost:${PORT}/admin.html\n`);
+    });
+  }).catch(err => {
+    console.error('Failed to start server:', err);
+  });
+}
 
 module.exports = app;
