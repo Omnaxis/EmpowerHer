@@ -138,7 +138,7 @@ NODE_ENV=development
 JWT_SECRET=your_super_secret_jwt_key
 GOOGLE_CLIENT_ID=your_google_oauth_client_id_here
 DATABASE_URL=your_neon_postgresql_connection_string_here
-SUPER_ADMIN_ID=Shs8775
+SUPER_ADMIN_ID=your_secure_id_here
 SUPER_ADMIN_PASSWORD=your_secure_password_here
 ```
 > [!IMPORTANT]
