@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Frontend API Configuration -->
+    <script src="config.js"></script>
     <style>
         :root {
             --primary: #2A9D8F;
@@ -1097,7 +1099,7 @@
 
     <script>
     // ─── CONFIG ───
-    const API = '/api/admin';
+    const API = (window.API_BASE !== undefined ? window.API_BASE : '') + '/api/admin';
     let currentAdmin = null;
     let currentSection = 'dashboard';
     let usersPage = 1;

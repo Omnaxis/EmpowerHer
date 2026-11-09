@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Frontend API Configuration -->
+    <script src="config.js"></script>
     <style>
         :root {
             --primary: #2A9D8F;
@@ -561,7 +563,7 @@
     <div class="toast" id="toast"></div>
 
 <script>
-    const API_BASE = window.location.origin;
+    const API_BASE = window.API_BASE !== undefined ? window.API_BASE : '';
     const token = localStorage.getItem('empowerher_token');
 
     if (token) {

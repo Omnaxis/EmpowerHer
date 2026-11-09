@@ -9,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Frontend API Configuration -->
+    <script src="config.js"></script>
     <!-- Google Sign-In Library -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
@@ -511,8 +513,8 @@
 </div>
 
 <script>
-    // --- API Base URL ---
-    const API_BASE = window.location.origin;
+    // --- API Base URL (configured via config.js) ---
+    const API_BASE = window.API_BASE !== undefined ? window.API_BASE : '';
 
     // --- Check if already logged in ---
     const existingToken = localStorage.getItem('empowerher_token');
