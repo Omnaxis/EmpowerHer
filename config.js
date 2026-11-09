@@ -11,7 +11,7 @@
 
 const APP_CONFIG = {
   // 🔗 Enter your live Render backend URL here:
-  RENDER_BACKEND_URL: 'https://empowerher-api.onrender.com',
+  RENDER_BACKEND_URL: 'https://empowerher-api-jcaw.onrender.com',
 };
 
 // Automatically resolve the active API Base URL

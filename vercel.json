@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://empowerher-api.onrender.com/api/:path*"
+      "destination": "https://empowerher-api-jcaw.onrender.com/api/:path*"
     }
   ]
 }
