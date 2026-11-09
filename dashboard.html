@@ -641,6 +641,209 @@
             text-align: center;
         }
 
+        /* ═══════ PROFILE MODAL & SKILLS ═══════ */
+        .profile-modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(38, 70, 83, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 1rem;
+            animation: fadeIn 0.25s ease;
+        }
+        .profile-modal-overlay.active { display: flex; }
+        .profile-modal {
+            background: var(--white);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 680px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            position: relative;
+            animation: fadeInUp 0.3s ease;
+        }
+        .profile-modal-header {
+            background: linear-gradient(135deg, var(--primary-light) 0%, #fff 100%);
+            padding: 2rem 2rem 1.5rem;
+            border-bottom: 1px solid #f0f0f0;
+            position: relative;
+        }
+        .profile-close-btn {
+            position: absolute;
+            top: 1.2rem;
+            right: 1.2rem;
+            background: rgba(0,0,0,0.06);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .profile-close-btn:hover { background: var(--secondary); color: white; }
+
+        .profile-summary-header {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+        .profile-avatar-large {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--pink));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .profile-info-block h2 { font-size: 1.5rem; font-weight: 800; color: var(--text); }
+        .profile-badge-pill {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            background: var(--primary);
+            color: white;
+            margin-top: 4px;
+        }
+
+        .profile-tabs {
+            display: flex;
+            border-bottom: 2px solid #f0f0f0;
+            padding: 0 2rem;
+            background: var(--white);
+            gap: 0.5rem;
+        }
+        .profile-tab-btn {
+            padding: 1rem 1.2rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .profile-tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .profile-body { padding: 1.8rem 2rem; }
+        .profile-tab-content { display: none; }
+        .profile-tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+        .form-group-custom { margin-bottom: 1.3rem; }
+        .form-group-custom label {
+            display: block;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 0.4rem;
+            color: var(--text);
+        }
+        .form-input-custom, .form-textarea-custom {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+        .form-input-custom:focus, .form-textarea-custom:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.1);
+        }
+
+        /* Skill pills */
+        .skills-pills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 0.5rem;
+        }
+        .skill-pill {
+            padding: 6px 14px;
+            border-radius: 50px;
+            background: #f0f0f0;
+            border: 2px solid transparent;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text);
+            cursor: pointer;
+            transition: var(--transition);
+            user-select: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .skill-pill:hover { background: #e4e4e4; }
+        .skill-pill.selected {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary-dark);
+        }
+        .custom-skill-input-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 0.8rem;
+        }
+        .btn-save-profile {
+            width: 100%;
+            padding: 0.9rem;
+            background: linear-gradient(135deg, var(--secondary) 0%, #e8845e 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.05rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 1.5rem;
+        }
+        .btn-save-profile:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(231, 111, 81, 0.3);
+        }
+
+        .btn-profile-card {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            border: 2px solid var(--primary);
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-top: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-block;
+        }
+        .btn-profile-card:hover {
+            background: var(--primary);
+            color: white;
+        }
+
         .footer-content {
             max-width: 600px;
             margin: 0 auto;
@@ -744,6 +947,7 @@
             <a href="jobs.html"><span class="nav-icon">💼</span> Find Work</a>
             <a href="learn.html"><span class="nav-icon">📖</span> Learn Skills</a>
             <a href="community.html"><span class="nav-icon">👩‍👩‍👧</span> Community</a>
+            <a href="#" id="nav-profile-btn" onclick="openProfileModal()" style="display:none;"><span class="nav-icon">👤</span> My Profile</a>
             <button class="btn-logout" id="logout-btn" onclick="logout()" style="display:none;">Logout</button>
         </div>
         <button class="hamburger" id="hamburger-btn" onclick="toggleMenu()" aria-label="Open Menu">
@@ -756,6 +960,7 @@
         <a href="jobs.html" onclick="toggleMenu()">💼 Find Work</a>
         <a href="learn.html" onclick="toggleMenu()">📖 Learn Skills</a>
         <a href="community.html" onclick="toggleMenu()">👩‍👩‍👧 Community</a>
+        <a href="#" id="mobile-profile-btn" onclick="toggleMenu(); openProfileModal();" style="display:none;">👤 My Profile</a>
         <button class="btn-logout" id="mobile-logout-btn" onclick="logout()" style="display:none;">🚪 Logout</button>
     </div>
 
@@ -773,7 +978,7 @@
             </div>
         </div>
         <div class="hero-image">
-            <div class="hero-card">
+            <div class="hero-card" onclick="openProfileModal()" style="cursor:pointer;" title="Click to view & complete your profile">
                 <span class="hero-card-emoji">👩‍💻</span>
                 <h3 id="welcome-name">Welcome!</h3>
                 <p id="welcome-jobs"><strong>3 New Jobs</strong> match your skills today!</p>
@@ -781,6 +986,7 @@
                     <div class="progress-bar-fill" id="profile-progress-bar" style="width: 0%;"></div>
                 </div>
                 <div class="progress-label" id="profile-progress-text">Profile Completion: 0%</div>
+                <button class="btn-profile-card" id="btn-edit-profile-card">✏️ View & Complete Profile</button>
             </div>
         </div>
     </section>
@@ -843,6 +1049,110 @@
         <a href="community.html" class="btn-primary">💬 Join Our Community</a>
     </section>
 
+    <!-- ═══════ PROFILE MODAL ═══════ -->
+    <div class="profile-modal-overlay" id="profile-modal-overlay">
+        <div class="profile-modal">
+            <div class="profile-modal-header">
+                <button class="profile-close-btn" onclick="closeProfileModal()">✕</button>
+                <div class="profile-summary-header">
+                    <div class="profile-avatar-large" id="modal-avatar">👩</div>
+                    <div class="profile-info-block">
+                        <h2 id="modal-user-name">Your Profile</h2>
+                        <span class="profile-badge-pill" id="modal-level-badge">🌸 Homepreneur Member</span>
+                        <div style="font-size: 0.85rem; color: var(--text-light); margin-top: 4px;" id="modal-contact-line">Loading details...</div>
+                    </div>
+                </div>
+                <div class="progress-bar-wrapper" style="margin-top: 1.2rem;">
+                    <div class="progress-bar-fill" id="modal-progress-bar" style="width: 30%;"></div>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 6px; font-size: 0.82rem; font-weight: 700; color: var(--text-light);">
+                    <span id="modal-progress-text">Profile Completion: 30%</span>
+                    <span id="modal-milestone-text">Add skills for +25%</span>
+                </div>
+            </div>
+
+            <div class="profile-tabs">
+                <button class="profile-tab-btn active" onclick="switchProfileTab('edit')">✏️ Edit Details & Skills</button>
+                <button class="profile-tab-btn" onclick="switchProfileTab('applications')">💼 My Applications (<span id="tab-app-count">0</span>)</button>
+                <button class="profile-tab-btn" onclick="switchProfileTab('courses')">📚 My Courses (<span id="tab-course-count">0</span>)</button>
+            </div>
+
+            <div class="profile-body">
+                <!-- TAB 1: EDIT DETAILS & SKILLS -->
+                <div class="profile-tab-content active" id="tab-content-edit">
+                    <form onsubmit="handleProfileSubmit(event)">
+                        <div class="form-group-custom">
+                            <label>Full Name *</label>
+                            <input type="text" id="prof-name" class="form-input-custom" placeholder="e.g. Anita Sharma" required>
+                        </div>
+
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group-custom">
+                                <label>Mobile Number</label>
+                                <input type="text" id="prof-mobile" class="form-input-custom" placeholder="10-digit number" readonly style="background:#f9f9f9; color:#888;">
+                            </div>
+                            <div class="form-group-custom">
+                                <label>Email Address</label>
+                                <input type="email" id="prof-email" class="form-input-custom" placeholder="Optional email" readonly style="background:#f9f9f9; color:#888;">
+                            </div>
+                        </div>
+
+                        <div class="form-group-custom">
+                            <label>Your City / Area 📍</label>
+                            <input type="text" id="prof-location" class="form-input-custom" placeholder="e.g. Mumbai, Borivali / Delhi NCR">
+                        </div>
+
+                        <div class="form-group-custom">
+                            <label>About You & What You're Looking For 📝</label>
+                            <textarea id="prof-bio" class="form-textarea-custom" rows="3" placeholder="Tell employers what you like doing, your free hours, or your work experience..."></textarea>
+                        </div>
+
+                        <div class="form-group-custom">
+                            <label>Your Skills (Tap to add/remove) 🌟</label>
+                            <div class="skills-pills-container" id="preset-skills-container">
+                                <span class="skill-pill" onclick="toggleSkill('Home Cooking', this)">🍲 Home Cooking</span>
+                                <span class="skill-pill" onclick="toggleSkill('Tiffin Service', this)">🍱 Tiffin Service</span>
+                                <span class="skill-pill" onclick="toggleSkill('Stitching & Tailoring', this)">👗 Stitching & Kurti Tailoring</span>
+                                <span class="skill-pill" onclick="toggleSkill('Handicrafts & Knitting', this)">🧶 Handicrafts</span>
+                                <span class="skill-pill" onclick="toggleSkill('Tutoring (Hindi/Math)', this)">📚 Tutoring</span>
+                                <span class="skill-pill" onclick="toggleSkill('Data Entry & Excel', this)">💻 Data Entry</span>
+                                <span class="skill-pill" onclick="toggleSkill('Baking & Snacks', this)">🧁 Baking & Snacks</span>
+                                <span class="skill-pill" onclick="toggleSkill('Mehndi & Beauty', this)">🎨 Mehndi & Beauty</span>
+                                <span class="skill-pill" onclick="toggleSkill('Packaging & Assembly', this)">📦 Packaging</span>
+                                <span class="skill-pill" onclick="toggleSkill('Phone Customer Support', this)">📞 Calling & Support</span>
+                            </div>
+
+                            <div class="custom-skill-input-row">
+                                <input type="text" id="custom-skill-input" class="form-input-custom" placeholder="Type another skill..." style="padding:0.6rem 0.9rem;">
+                                <button type="button" class="btn-profile-card" onclick="addCustomSkill()" style="margin-top:0; white-space:nowrap;">➕ Add</button>
+                            </div>
+
+                            <div style="margin-top:0.8rem; font-size:0.85rem; color:var(--text-light); font-weight:600;">
+                                Selected Skills: <span id="selected-skills-display" style="color:var(--primary); font-weight:700;">None yet</span>
+                            </div>
+                        </div>
+
+                        <div id="profile-save-msg" style="display:none; padding:0.8rem; border-radius:10px; font-weight:700; margin-top:1rem; text-align:center;"></div>
+
+                        <button type="submit" class="btn-save-profile" id="btn-save-prof">
+                            💾 Save Profile Changes
+                        </button>
+                    </form>
+                </div>
+
+                <!-- TAB 2: MY APPLICATIONS -->
+                <div class="profile-tab-content" id="tab-content-applications">
+                    <div id="user-apps-container">Loading your applications...</div>
+                </div>
+
+                <!-- TAB 3: MY COURSES -->
+                <div class="profile-tab-content" id="tab-content-courses">
+                    <div id="user-courses-container">Loading course progress...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer>
         <div class="footer-content">
             <div class="footer-logo">🌸 EmpowerHer</div>
@@ -862,6 +1172,8 @@
 <script>
     const API_BASE = window.location.origin;
     const token = localStorage.getItem('empowerher_token');
+    let currentUserData = null;
+    let userSkillsList = [];
 
     // --- Time-of-day greeting ---
     function getGreeting() {
@@ -893,6 +1205,11 @@
         const mobileLogout = document.getElementById('mobile-logout-btn');
         if (mobileLogout) mobileLogout.style.display = 'inline-block';
 
+        const navProfile = document.getElementById('nav-profile-btn');
+        if (navProfile) navProfile.style.display = 'inline-flex';
+        const mobileProfile = document.getElementById('mobile-profile-btn');
+        if (mobileProfile) mobileProfile.style.display = 'flex';
+
         try {
             const res = await fetch(`${API_BASE}/api/auth/me`, {
                 headers: { 'Authorization': `Bearer ${token}` }
@@ -907,14 +1224,9 @@
             }
 
             const data = await res.json();
-            const user = data.user;
+            currentUserData = data.user;
 
-            const firstName = user.fullName.split(' ')[0];
-            document.getElementById('welcome-name').textContent = `Welcome, ${firstName}! 🌸`;
-            document.getElementById('hero-greeting').textContent = `${getGreeting().slice(0, -1)}, ${firstName}! 🌸`;
-
-            document.getElementById('profile-progress-bar').style.width = `${user.profileCompletion}%`;
-            document.getElementById('profile-progress-text').textContent = `Profile Completion: ${user.profileCompletion}%`;
+            updateDashboardUI(currentUserData);
 
             const jobRes = await fetch(`${API_BASE}/api/jobs`);
             const jobData = await jobRes.json();
@@ -922,6 +1234,236 @@
 
         } catch (err) {
             console.error('Dashboard load error:', err);
+        }
+    }
+
+    function updateDashboardUI(user) {
+        if (!user) return;
+        const firstName = (user.fullName || 'Homepreneur').split(' ')[0];
+        document.getElementById('welcome-name').textContent = `Welcome, ${firstName}! 🌸`;
+        document.getElementById('hero-greeting').textContent = `${getGreeting().slice(0, -1)}, ${firstName}! 🌸`;
+
+        const comp = user.profileCompletion || 30;
+        document.getElementById('profile-progress-bar').style.width = `${comp}%`;
+        document.getElementById('profile-progress-text').textContent = `Profile Completion: ${comp}%`;
+    }
+
+    // ═══════ PROFILE MODAL LOGIC ═══════
+    function openProfileModal() {
+        if (!token) {
+            window.location.href = 'index.html';
+            return;
+        }
+        if (!currentUserData) {
+            loadDashboard().then(() => populateProfileModal());
+        } else {
+            populateProfileModal();
+        }
+        document.getElementById('profile-modal-overlay').classList.add('active');
+    }
+
+    function closeProfileModal() {
+        document.getElementById('profile-modal-overlay').classList.remove('active');
+        document.getElementById('profile-save-msg').style.display = 'none';
+    }
+
+    function switchProfileTab(tab) {
+        document.querySelectorAll('.profile-tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.profile-tab-content').forEach(c => c.classList.remove('active'));
+
+        const targetBtn = Array.from(document.querySelectorAll('.profile-tab-btn')).find(b => b.textContent.toLowerCase().includes(tab));
+        if (targetBtn) targetBtn.classList.add('active');
+
+        const targetContent = document.getElementById(`tab-content-${tab}`);
+        if (targetContent) targetContent.classList.add('active');
+    }
+
+    function populateProfileModal() {
+        if (!currentUserData) return;
+        const u = currentUserData;
+
+        document.getElementById('modal-user-name').textContent = u.fullName || 'Homepreneur';
+        document.getElementById('modal-contact-line').textContent = `${u.mobile || u.email || 'Member'} ${u.location ? '• ' + u.location : ''}`;
+
+        // Level badge
+        const comp = u.profileCompletion || 30;
+        const badge = document.getElementById('modal-level-badge');
+        if (comp >= 80) badge.textContent = '🏆 Gold Homepreneur';
+        else if (comp >= 60) badge.textContent = '⭐ Silver Homepreneur';
+        else badge.textContent = '🌸 Bronze Homepreneur';
+
+        document.getElementById('modal-progress-bar').style.width = `${comp}%`;
+        document.getElementById('modal-progress-text').textContent = `Profile Completion: ${comp}%`;
+        document.getElementById('modal-milestone-text').textContent = comp >= 90 ? '🌟 Profile Completed!' : 'Add skills & bio for +40%';
+
+        // Form fields
+        document.getElementById('prof-name').value = u.fullName || '';
+        document.getElementById('prof-mobile').value = u.mobile || 'Not provided';
+        document.getElementById('prof-email').value = u.email || 'Not provided';
+        document.getElementById('prof-location').value = u.location || '';
+        document.getElementById('prof-bio').value = u.bio || '';
+
+        // Skills setup
+        userSkillsList = (u.skills || '')
+            .split(',')
+            .map(s => s.trim())
+            .filter(Boolean);
+
+        renderPresetSkillPills();
+        renderSelectedSkillsText();
+
+        // Applications tab
+        const apps = u.applications || [];
+        document.getElementById('tab-app-count').textContent = apps.length;
+        const appsContainer = document.getElementById('user-apps-container');
+        if (!apps.length) {
+            appsContainer.innerHTML = '<div style="text-align:center; padding:2rem; color:var(--text-light);"><span style="font-size:2.5rem; display:block; margin-bottom:0.5rem;">💼</span>You haven\'t applied to any jobs yet.<br><a href="jobs.html" style="color:var(--primary); font-weight:700; text-decoration:underline;">Browse Available Jobs →</a></div>';
+        } else {
+            appsContainer.innerHTML = apps.map(a => `
+                <div style="background:#fafafa; padding:1rem 1.2rem; border-radius:14px; margin-bottom:0.8rem; display:flex; justify-content:space-between; align-items:center; border:1px solid #eee;">
+                    <div>
+                        <div style="font-weight:800; font-size:1.05rem;">${a.icon || '💼'} ${a.title}</div>
+                        <div style="font-size:0.85rem; color:var(--text-light); margin-top:2px;">${a.category} • ${a.pay}</div>
+                        <div style="font-size:0.75rem; color:#888; margin-top:3px;">Applied on ${new Date(a.appliedAt).toLocaleDateString()}</div>
+                    </div>
+                    <span style="padding:4px 12px; border-radius:50px; font-weight:700; font-size:0.8rem; text-transform:capitalize; background:${a.status==='approved'?'#e8f8f0':a.status==='rejected'?'#fdecea':'#fef9e7'}; color:${a.status==='approved'?'#27ae60':a.status==='rejected'?'#e74c3c':'#f39c12'};">
+                        ${a.status}
+                    </span>
+                </div>
+            `).join('');
+        }
+
+        // Courses tab
+        const courses = u.courses || [];
+        document.getElementById('tab-course-count').textContent = courses.length;
+        const coursesContainer = document.getElementById('user-courses-container');
+        if (!courses.length) {
+            coursesContainer.innerHTML = '<div style="text-align:center; padding:2rem; color:var(--text-light);"><span style="font-size:2.5rem; display:block; margin-bottom:0.5rem;">📖</span>No courses started yet.<br><a href="learn.html" style="color:var(--primary); font-weight:700; text-decoration:underline;">Explore Micro-Courses →</a></div>';
+        } else {
+            coursesContainer.innerHTML = courses.map(c => `
+                <div style="background:#fafafa; padding:1rem 1.2rem; border-radius:14px; margin-bottom:0.8rem; display:flex; justify-content:space-between; align-items:center; border:1px solid #eee;">
+                    <div>
+                        <div style="font-weight:800; font-size:1rem;">📚 ${c.title}</div>
+                        <div style="font-size:0.85rem; color:var(--text-light); margin-top:2px;">${c.category} • ${c.duration}</div>
+                    </div>
+                    <span style="padding:4px 12px; border-radius:50px; font-weight:700; font-size:0.8rem; background:${c.completed?'#e8f8f0':'#fef9e7'}; color:${c.completed?'#27ae60':'#f39c12'};">
+                        ${c.completed ? '✅ Completed' : '⏳ In Progress'}
+                    </span>
+                </div>
+            `).join('');
+        }
+    }
+
+    function renderPresetSkillPills() {
+        document.querySelectorAll('#preset-skills-container .skill-pill').forEach(pill => {
+            const skillName = pill.textContent.replace(/^[^\s]+\s+/, '').trim();
+            const isMatch = userSkillsList.some(s => s.toLowerCase() === skillName.toLowerCase() || pill.textContent.toLowerCase().includes(s.toLowerCase()));
+            if (isMatch) pill.classList.add('selected');
+            else pill.classList.remove('selected');
+        });
+    }
+
+    function toggleSkill(skillName, pillEl) {
+        const idx = userSkillsList.findIndex(s => s.toLowerCase() === skillName.toLowerCase());
+        if (idx >= 0) {
+            userSkillsList.splice(idx, 1);
+            if (pillEl) pillEl.classList.remove('selected');
+        } else {
+            userSkillsList.push(skillName);
+            if (pillEl) pillEl.classList.add('selected');
+        }
+        renderSelectedSkillsText();
+    }
+
+    function addCustomSkill() {
+        const input = document.getElementById('custom-skill-input');
+        const val = input.value.trim();
+        if (!val) return;
+        if (!userSkillsList.some(s => s.toLowerCase() === val.toLowerCase())) {
+            userSkillsList.push(val);
+            renderSelectedSkillsText();
+            renderPresetSkillPills();
+        }
+        input.value = '';
+    }
+
+    function renderSelectedSkillsText() {
+        const display = document.getElementById('selected-skills-display');
+        if (!userSkillsList.length) {
+            display.textContent = 'None selected yet';
+            display.style.color = 'var(--text-light)';
+        } else {
+            display.innerHTML = userSkillsList.map(s => `
+                <span style="display:inline-flex; align-items:center; gap:4px; background:var(--primary-light); color:var(--primary-dark); padding:2px 10px; border-radius:50px; margin:2px; font-size:0.82rem;">
+                    ${s} <span onclick="removeSkill('${s}')" style="cursor:pointer; font-weight:bold; margin-left:2px;">✕</span>
+                </span>
+            `).join(' ');
+        }
+    }
+
+    function removeSkill(skillName) {
+        userSkillsList = userSkillsList.filter(s => s !== skillName);
+        renderPresetSkillPills();
+        renderSelectedSkillsText();
+    }
+
+    async function handleProfileSubmit(e) {
+        e.preventDefault();
+        const btn = document.getElementById('btn-save-prof');
+        const msg = document.getElementById('profile-save-msg');
+
+        const body = {
+            fullName: document.getElementById('prof-name').value,
+            location: document.getElementById('prof-location').value,
+            bio: document.getElementById('prof-bio').value,
+            skills: userSkillsList.join(', ')
+        };
+
+        btn.disabled = true;
+        btn.textContent = '⏳ Saving changes...';
+
+        try {
+            const res = await fetch(`${API_BASE}/api/auth/profile`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(body)
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                currentUserData = { ...currentUserData, ...data.user };
+                updateDashboardUI(currentUserData);
+
+                msg.style.display = 'block';
+                msg.style.background = '#e8f8f0';
+                msg.style.color = '#27ae60';
+                msg.textContent = `${data.message} Completion: ${data.user.profileCompletion}% ⭐`;
+
+                // Update modal progress bar
+                document.getElementById('modal-progress-bar').style.width = `${data.user.profileCompletion}%`;
+                document.getElementById('modal-progress-text').textContent = `Profile Completion: ${data.user.profileCompletion}%`;
+                document.getElementById('modal-user-name').textContent = data.user.fullName;
+
+                setTimeout(() => {
+                    closeProfileModal();
+                }, 1600);
+            } else {
+                msg.style.display = 'block';
+                msg.style.background = '#fdecea';
+                msg.style.color = '#e74c3c';
+                msg.textContent = data.error || 'Failed to update profile.';
+            }
+        } catch (err) {
+            msg.style.display = 'block';
+            msg.style.background = '#fdecea';
+            msg.style.color = '#e74c3c';
+            msg.textContent = 'Network error saving profile.';
+        } finally {
+            btn.disabled = false;
+            btn.textContent = '💾 Save Profile Changes';
         }
     }
 

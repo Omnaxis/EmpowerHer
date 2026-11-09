@@ -158,6 +158,12 @@ async function initDb() {
       IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='lastLogin') THEN
         ALTER TABLE users ADD COLUMN "lastLogin" TIMESTAMP DEFAULT NOW();
       END IF;
+      IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='bio') THEN
+        ALTER TABLE users ADD COLUMN bio TEXT DEFAULT '';
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='location') THEN
+        ALTER TABLE users ADD COLUMN location TEXT DEFAULT '';
+      END IF;
     END $$
   `;
 

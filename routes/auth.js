@@ -93,16 +93,82 @@ router.post('/google', async (req, res) => {
 router.get('/me', authenticateToken, async (req, res) => {
   try {
     const user = await queryOne(
-      `SELECT id, "fullName", mobile, email, avatar, skills, "profileCompletion", "createdAt" FROM users WHERE id = $1`,
+      `SELECT id, "fullName", mobile, email, avatar, skills, bio, location, "profileCompletion", "createdAt" FROM users WHERE id = $1`,
       [req.user.id]
     );
     if (!user) return res.status(404).json({ error: 'User not found.' });
 
-    const appCount = await queryOne('SELECT COUNT(*) as count FROM applications WHERE "userId" = $1', [req.user.id]);
-    const postCount = await queryOne('SELECT COUNT(*) as count FROM posts WHERE "userId" = $1', [req.user.id]);
+    const [appCount, postCount, apps, progress] = await Promise.all([
+      queryOne('SELECT COUNT(*) as count FROM applications WHERE "userId" = $1', [req.user.id]),
+      queryOne('SELECT COUNT(*) as count FROM posts WHERE "userId" = $1', [req.user.id]),
+      query(
+        `SELECT a.id, a.status, a."appliedAt", j.title, j.category, j.pay, j.icon
+         FROM applications a JOIN jobs j ON a."jobId" = j.id
+         WHERE a."userId" = $1 ORDER BY a."appliedAt" DESC`,
+        [req.user.id]
+      ),
+      query(
+        `SELECT up.completed, up."completedAt", c.title, c.category, c.duration
+         FROM user_progress up JOIN courses c ON up."courseId" = c.id
+         WHERE up."userId" = $1`,
+        [req.user.id]
+      )
+    ]);
 
-    res.json({ user: { ...user, applicationCount: parseInt(appCount?.count) || 0, postCount: parseInt(postCount?.count) || 0 } });
+    res.json({
+      user: {
+        ...user,
+        applicationCount: parseInt(appCount?.count) || 0,
+        postCount: parseInt(postCount?.count) || 0,
+        applications: apps || [],
+        courses: progress || []
+      }
+    });
   } catch (err) { console.error('Me error:', err); res.status(500).json({ error: 'Server error.' }); }
+});
+
+router.put('/profile', authenticateToken, async (req, res) => {
+  try {
+    const { fullName, skills, bio, location } = req.body;
+    const userId = req.user.id;
+
+    const existing = await queryOne('SELECT * FROM users WHERE id = $1', [userId]);
+    if (!existing) return res.status(404).json({ error: 'User not found.' });
+
+    const newName = fullName !== undefined ? fullName.trim() : existing.fullName;
+    const newSkills = skills !== undefined ? skills.trim() : (existing.skills || '');
+    const newBio = bio !== undefined ? bio.trim() : (existing.bio || '');
+    const newLoc = location !== undefined ? location.trim() : (existing.location || '');
+
+    if (!newName) {
+      return res.status(400).json({ error: 'Full name cannot be empty.' });
+    }
+
+    // Smart completion calculation (0 - 100%)
+    let completion = 30; // base for account creation
+    if (newName.length >= 3) completion += 10;
+    if (existing.mobile || existing.email) completion += 10;
+    if (newSkills.length > 0) completion += 25;
+    if (newBio.length >= 5) completion += 15;
+    if (newLoc.length >= 2) completion += 10;
+    completion = Math.min(completion, 100);
+
+    const updated = await queryOne(
+      `UPDATE users
+       SET "fullName" = $1, skills = $2, bio = $3, location = $4, "profileCompletion" = $5
+       WHERE id = $6
+       RETURNING id, "fullName", mobile, email, avatar, skills, bio, location, "profileCompletion", "createdAt"`,
+      [newName, newSkills, newBio, newLoc, completion, userId]
+    );
+
+    res.json({
+      message: 'Profile updated successfully! 🎉',
+      user: updated
+    });
+  } catch (err) {
+    console.error('Update profile error:', err);
+    res.status(500).json({ error: 'Server error updating profile.' });
+  }
 });
 
 module.exports = router;
