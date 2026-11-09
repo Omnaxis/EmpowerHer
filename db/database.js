@@ -167,6 +167,20 @@ async function initDb() {
     END $$
   `;
 
+  await sql`
+    CREATE TABLE IF NOT EXISTS admin_logs (
+      id SERIAL PRIMARY KEY,
+      "adminRefId" INTEGER,
+      "adminId" TEXT NOT NULL,
+      "adminRole" TEXT NOT NULL,
+      action TEXT NOT NULL,
+      "targetType" TEXT NOT NULL,
+      "targetId" INTEGER,
+      details TEXT NOT NULL,
+      "createdAt" TIMESTAMP DEFAULT NOW()
+    )
+  `;
+
   console.log('✅ All database tables initialized');
 }
 

@@ -14,6 +14,20 @@ function generateAdminToken(admin) {
   );
 }
 
+// ─── Admin Action Logger ────────────────────────────────────────
+async function logAdminAction(admin, action, targetType, targetId, details) {
+  try {
+    if (!admin) return;
+    await query(
+      `INSERT INTO admin_logs ("adminRefId", "adminId", "adminRole", action, "targetType", "targetId", details)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [admin.id || null, admin.adminId || 'System', admin.role || 'admin', action, targetType, targetId || null, details]
+    );
+  } catch (err) {
+    console.error('Failed to write admin log:', err);
+  }
+}
+
 // ─── POST /login ────────────────────────────────────────────────
 router.post('/login', async (req, res) => {
   try {
@@ -33,6 +47,9 @@ router.post('/login', async (req, res) => {
     }
 
     const token = generateAdminToken(admin);
+
+    await logAdminAction(admin, 'ADMIN_LOGIN', 'auth', admin.id, `Admin "${admin.adminId}" (${admin.role}) signed in to portal`);
+
     res.json({
       message: 'Admin login successful!',
       token,
@@ -268,10 +285,19 @@ router.put('/users/:id/ban', authenticateAdmin, requireSuperAdmin, async (req, r
       return res.status(400).json({ error: 'banned field must be a boolean.' });
     }
 
-    const user = await queryOne('SELECT id FROM users WHERE id = $1', [userId]);
+    const user = await queryOne('SELECT id, "fullName" FROM users WHERE id = $1', [userId]);
     if (!user) return res.status(404).json({ error: 'User not found.' });
 
     await query('UPDATE users SET banned = $1 WHERE id = $2', [banned, userId]);
+
+    await logAdminAction(
+      req.admin,
+      banned ? 'BAN_USER' : 'UNBAN_USER',
+      'user',
+      userId,
+      `${banned ? 'Banned' : 'Unbanned'} user "${user.fullName}" (ID: #${userId})`
+    );
+
     res.json({ message: `User ${banned ? 'banned' : 'unbanned'} successfully.`, banned });
   } catch (err) {
     console.error('Ban user error:', err);
@@ -356,10 +382,26 @@ router.put('/applications/:id/status', authenticateAdmin, async (req, res) => {
       return res.status(400).json({ error: `Status must be one of: ${validStatuses.join(', ')}` });
     }
 
-    const app = await queryOne('SELECT id FROM applications WHERE id = $1', [appId]);
+    const app = await queryOne(
+      `SELECT a.id, u."fullName" as "userName", j.title as "jobTitle"
+       FROM applications a
+       JOIN users u ON u.id = a."userId"
+       JOIN jobs j ON j.id = a."jobId"
+       WHERE a.id = $1`,
+      [appId]
+    );
     if (!app) return res.status(404).json({ error: 'Application not found.' });
 
     await query('UPDATE applications SET status = $1 WHERE id = $2', [status, appId]);
+
+    await logAdminAction(
+      req.admin,
+      status === 'approved' ? 'APPROVE_APPLICATION' : status === 'rejected' ? 'REJECT_APPLICATION' : 'UPDATE_APPLICATION_STATUS',
+      'application',
+      appId,
+      `Changed application #${appId} for "${app.userName}" on job "${app.jobTitle}" to "${status}"`
+    );
+
     res.json({ message: `Application status updated to ${status}.`, status });
   } catch (err) {
     console.error('Update application status error:', err);
@@ -397,6 +439,8 @@ router.post('/jobs', authenticateAdmin, async (req, res) => {
       [title, category, pay, description, time, location, requirements, icon || '', badgeClass || '']
     );
 
+    await logAdminAction(req.admin, 'CREATE_JOB', 'job', job.id, `Created job "${job.title}" (${job.category}, ${job.pay})`);
+
     res.status(201).json({ message: 'Job created successfully.', job });
   } catch (err) {
     console.error('Create job error:', err);
@@ -430,6 +474,8 @@ router.put('/jobs/:id', authenticateAdmin, async (req, res) => {
       [title, category, pay, description, time, location, requirements, icon, badgeClass, jobId]
     );
 
+    await logAdminAction(req.admin, 'UPDATE_JOB', 'job', jobId, `Updated job "${job.title}" (ID: #${jobId})`);
+
     res.json({ message: 'Job updated successfully.', job });
   } catch (err) {
     console.error('Update job error:', err);
@@ -443,12 +489,14 @@ router.delete('/jobs/:id', authenticateAdmin, requireSuperAdmin, async (req, res
     const jobId = parseInt(req.params.id);
     if (isNaN(jobId)) return res.status(400).json({ error: 'Invalid job ID.' });
 
-    const existing = await queryOne('SELECT id FROM jobs WHERE id = $1', [jobId]);
+    const existing = await queryOne('SELECT id, title FROM jobs WHERE id = $1', [jobId]);
     if (!existing) return res.status(404).json({ error: 'Job not found.' });
 
     // Delete related applications first
     await query('DELETE FROM applications WHERE "jobId" = $1', [jobId]);
     await query('DELETE FROM jobs WHERE id = $1', [jobId]);
+
+    await logAdminAction(req.admin, 'DELETE_JOB', 'job', jobId, `Deleted job "${existing.title}" (ID: #${jobId}) and all its applications`);
 
     res.json({ message: 'Job and its applications deleted successfully.' });
   } catch (err) {
@@ -487,6 +535,8 @@ router.delete('/posts/:id', authenticateAdmin, async (req, res) => {
     await query('DELETE FROM post_likes WHERE "postId" = $1', [postId]);
     await query('DELETE FROM comments WHERE "postId" = $1', [postId]);
     await query('DELETE FROM posts WHERE id = $1', [postId]);
+
+    await logAdminAction(req.admin, 'DELETE_POST', 'post', postId, `Deleted community post #${postId} ("${(existing.content || '').substring(0, 40)}...")`);
 
     res.json({ message: 'Post and its likes/comments deleted successfully.' });
   } catch (err) {
@@ -527,6 +577,8 @@ router.post('/admins', authenticateAdmin, requireSuperAdmin, async (req, res) =>
       [adminId, hashed, 'admin', req.admin.id]
     );
 
+    await logAdminAction(req.admin, 'CREATE_ADMIN', 'admin', admin.id, `Created new admin "${adminId}"`);
+
     res.status(201).json({ message: 'Admin created successfully.', admin });
   } catch (err) {
     console.error('Create admin error:', err);
@@ -545,7 +597,7 @@ router.delete('/admins/:id', authenticateAdmin, requireSuperAdmin, async (req, r
       return res.status(400).json({ error: 'You cannot delete your own admin account.' });
     }
 
-    const target = await queryOne('SELECT id, role FROM admins WHERE id = $1', [adminId]);
+    const target = await queryOne('SELECT id, role, "adminId" FROM admins WHERE id = $1', [adminId]);
     if (!target) return res.status(404).json({ error: 'Admin not found.' });
 
     // Cannot delete other super admins
@@ -554,10 +606,61 @@ router.delete('/admins/:id', authenticateAdmin, requireSuperAdmin, async (req, r
     }
 
     await query('DELETE FROM admins WHERE id = $1', [adminId]);
+
+    await logAdminAction(req.admin, 'DELETE_ADMIN', 'admin', adminId, `Deleted admin "${target.adminId}" (ID: #${adminId})`);
+
     res.json({ message: 'Admin deleted successfully.' });
   } catch (err) {
     console.error('Delete admin error:', err);
     res.status(500).json({ error: 'Server error deleting admin.' });
+  }
+});
+
+// ─── GET /logs (Visible to all Admins and Super Admins) ───────────
+router.get('/logs', authenticateAdmin, async (req, res) => {
+  try {
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 25));
+    const offset = (page - 1) * limit;
+    const action = req.query.action || '';
+    const search = req.query.search || '';
+
+    const conditions = [];
+    const params = [];
+    let paramIndex = 1;
+
+    if (action) {
+      conditions.push(`action = $${paramIndex++}`);
+      params.push(action);
+    }
+    if (search) {
+      conditions.push(`("adminId" ILIKE $${paramIndex} OR details ILIKE $${paramIndex} OR "targetType" ILIKE $${paramIndex} OR action ILIKE $${paramIndex})`);
+      params.push(`%${search}%`);
+      paramIndex++;
+    }
+
+    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+    const countResult = await queryOne(`SELECT COUNT(*) as count FROM admin_logs ${whereClause}`, params);
+    const total = parseInt(countResult?.count) || 0;
+
+    const logs = await query(
+      `SELECT * FROM admin_logs ${whereClause} ORDER BY "createdAt" DESC LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`,
+      [...params, limit, offset]
+    );
+
+    res.json({
+      logs: logs || [],
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit)
+      }
+    });
+  } catch (err) {
+    console.error('Get logs error:', err);
+    res.status(500).json({ error: 'Server error fetching admin logs.' });
   }
 });
 
