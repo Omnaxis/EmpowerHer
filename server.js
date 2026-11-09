@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -35,6 +36,23 @@ app.use('/api/admin', require('./routes/admin'));
 // --- Health check ---
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// --- Frontend Fallback (serves HTML/assets whether on Vercel, Render, or Localhost) ---
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api')) return next();
+  const reqPath = req.path === '/' ? 'index.html' : req.path.replace(/^\//, '');
+  const publicFile = path.join(__dirname, 'public', reqPath.endsWith('.html') ? reqPath : reqPath + '.html');
+  const rootFile = path.join(__dirname, reqPath.endsWith('.html') ? reqPath : reqPath + '.html');
+  const exactPublic = path.join(__dirname, 'public', reqPath);
+  const exactRoot = path.join(__dirname, reqPath);
+
+  if (fs.existsSync(exactPublic) && fs.statSync(exactPublic).isFile()) return res.sendFile(exactPublic);
+  if (fs.existsSync(exactRoot) && fs.statSync(exactRoot).isFile()) return res.sendFile(exactRoot);
+  if (fs.existsSync(publicFile)) return res.sendFile(publicFile);
+  if (fs.existsSync(rootFile)) return res.sendFile(rootFile);
+
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // --- Error handling middleware ---
@@ -79,3 +97,5 @@ start().catch(err => {
   console.error('Failed to start server:', err);
   process.exit(1);
 });
+
+module.exports = app;
