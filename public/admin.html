@@ -691,7 +691,7 @@
             </div>
             <div class="login-field">
                 <label>Password</label>
-                <input type="password" id="login-password" placeholder="Enter your password">
+                <input type="password" id="login-password" placeholder="Enter your password" autocomplete="new-password">
             </div>
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; font-size: 0.9rem;">
                 <label style="display: inline-flex; align-items: center; gap: 7px; cursor: pointer; color: var(--text); user-select: none;">
@@ -1218,6 +1218,13 @@
             const remember = document.getElementById('admin-remember-me') ? document.getElementById('admin-remember-me').checked : true;
             setToken(data.token, data.admin, remember);
             currentAdmin = data.admin;
+
+            // Wipe entered credentials completely from memory and DOM inputs
+            const idInput = document.getElementById('login-id');
+            const passInput = document.getElementById('login-password');
+            if (idInput) idInput.value = '';
+            if (passInput) passInput.value = '';
+
             showAdminLayout();
         } catch (err) { errEl.textContent = 'Network error. Please try again.'; errEl.style.display = 'block'; }
         finally { btn.disabled = false; btn.textContent = '🔑 Sign In'; }
@@ -1234,6 +1241,15 @@
     function handleLogout() {
         clearAuth();
         currentAdmin = null;
+
+        // Completely reset login input fields and errors on logout
+        const idInput = document.getElementById('login-id');
+        const passInput = document.getElementById('login-password');
+        const errEl = document.getElementById('login-error');
+        if (idInput) idInput.value = '';
+        if (passInput) passInput.value = '';
+        if (errEl) { errEl.textContent = ''; errEl.style.display = 'none'; }
+
         showLoginPage();
         showToast('Logged out successfully.');
     }
@@ -1246,6 +1262,14 @@
     }
 
     function showLoginPage() {
+        // Ensure credentials are fully cleared whenever login screen is shown
+        const idInput = document.getElementById('login-id');
+        const passInput = document.getElementById('login-password');
+        const errEl = document.getElementById('login-error');
+        if (idInput) idInput.value = '';
+        if (passInput) passInput.value = '';
+        if (errEl) { errEl.textContent = ''; errEl.style.display = 'none'; }
+
         document.getElementById('login-page').style.display = 'flex';
         document.getElementById('admin-layout').classList.remove('active');
     }
