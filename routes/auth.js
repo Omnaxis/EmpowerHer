@@ -145,7 +145,7 @@ router.get('/me', authenticateToken, async (req, res) => {
 
 router.put('/profile', authenticateToken, async (req, res) => {
   try {
-    const { fullName, skills, bio, location } = req.body;
+    const { fullName, mobile, email, skills, bio, location } = req.body;
     const userId = req.user.id;
 
     const existing = await queryOne('SELECT * FROM users WHERE id = $1', [userId]);
@@ -160,21 +160,56 @@ router.put('/profile', authenticateToken, async (req, res) => {
       return res.status(400).json({ error: 'Full name cannot be empty.' });
     }
 
+    // Handle mobile number update
+    let newMobile = existing.mobile;
+    if (mobile !== undefined && mobile !== null) {
+      const trimmedMobile = mobile.toString().trim();
+      if (trimmedMobile) {
+        if (!/^\d{10}$/.test(trimmedMobile)) {
+          return res.status(400).json({ error: 'Mobile number must be exactly 10 digits.' });
+        }
+        const mobileConflict = await queryOne('SELECT id FROM users WHERE mobile = $1 AND id != $2', [trimmedMobile, userId]);
+        if (mobileConflict) {
+          return res.status(409).json({ error: 'An account with this mobile number already exists.' });
+        }
+        newMobile = trimmedMobile;
+      }
+    }
+
+    // Handle email update (allow linking email if user registered with phone)
+    let newEmail = existing.email;
+    if (email !== undefined && email !== null) {
+      const trimmedEmail = email.toString().trim();
+      if (trimmedEmail && trimmedEmail !== existing.email) {
+        // If account is linked to Google, keep the authenticated Google email
+        if (existing.googleId && existing.email) {
+          newEmail = existing.email;
+        } else {
+          const emailConflict = await queryOne('SELECT id FROM users WHERE email = $1 AND id != $2', [trimmedEmail, userId]);
+          if (emailConflict) {
+            return res.status(409).json({ error: 'An account with this email address already exists.' });
+          }
+          newEmail = trimmedEmail;
+        }
+      }
+    }
+
     // Smart completion calculation (0 - 100%)
     let completion = 30; // base for account creation
     if (newName.length >= 3) completion += 10;
-    if (existing.mobile || existing.email) completion += 10;
-    if (newSkills.length > 0) completion += 25;
-    if (newBio.length >= 5) completion += 15;
-    if (newLoc.length >= 2) completion += 10;
+    if (newMobile) completion += 15;
+    if (newEmail) completion += 10;
+    if (newSkills.length > 0) completion += 20;
+    if (newBio.length >= 5) completion += 10;
+    if (newLoc.length >= 2) completion += 5;
     completion = Math.min(completion, 100);
 
     const updated = await queryOne(
       `UPDATE users
-       SET "fullName" = $1, skills = $2, bio = $3, location = $4, "profileCompletion" = $5
-       WHERE id = $6
+       SET "fullName" = $1, mobile = $2, email = $3, skills = $4, bio = $5, location = $6, "profileCompletion" = $7
+       WHERE id = $8
        RETURNING id, "fullName", mobile, email, avatar, skills, bio, location, "profileCompletion", "createdAt"`,
-      [newName, newSkills, newBio, newLoc, completion, userId]
+      [newName, newMobile, newEmail, newSkills, newBio, newLoc, completion, userId]
     );
 
     res.json({

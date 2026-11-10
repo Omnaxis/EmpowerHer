@@ -1124,12 +1124,14 @@
 
                         <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                             <div class="form-group-custom">
-                                <label>Mobile Number</label>
-                                <input type="text" id="prof-mobile" class="form-input-custom" placeholder="10-digit number" readonly style="background:#f9f9f9; color:#888;">
+                                <label>Mobile Number 📱</label>
+                                <input type="tel" id="prof-mobile" class="form-input-custom" placeholder="10-digit number" maxlength="10">
+                                <small id="hint-prof-mobile" style="font-size: 0.78rem; color: var(--text-light); display: block; margin-top: 4px;"></small>
                             </div>
                             <div class="form-group-custom">
-                                <label>Email Address</label>
-                                <input type="email" id="prof-email" class="form-input-custom" placeholder="Optional email" readonly style="background:#f9f9f9; color:#888;">
+                                <label>Email Address ✉️</label>
+                                <input type="email" id="prof-email" class="form-input-custom" placeholder="e.g. name@example.com">
+                                <small id="hint-prof-email" style="font-size: 0.78rem; color: var(--text-light); display: block; margin-top: 4px;"></small>
                             </div>
                         </div>
 
@@ -1338,10 +1340,42 @@
 
         // Form fields
         document.getElementById('prof-name').value = u.fullName || '';
-        document.getElementById('prof-mobile').value = u.mobile || 'Not provided';
-        document.getElementById('prof-email').value = u.email || 'Not provided';
         document.getElementById('prof-location').value = u.location || '';
         document.getElementById('prof-bio').value = u.bio || '';
+
+        // Mobile field handling
+        const mobileInput = document.getElementById('prof-mobile');
+        const mobileHint = document.getElementById('hint-prof-mobile');
+        if (u.mobile) {
+            mobileInput.value = u.mobile;
+            mobileInput.readOnly = true;
+            mobileInput.style.background = '#f9f9f9';
+            mobileInput.style.color = '#777';
+            if (mobileHint) mobileHint.textContent = '🔒 Registered mobile number';
+        } else {
+            mobileInput.value = '';
+            mobileInput.readOnly = false;
+            mobileInput.style.background = '#ffffff';
+            mobileInput.style.color = 'var(--text)';
+            if (mobileHint) mobileHint.textContent = '💡 Add 10-digit number for SMS alerts (+15% progress)';
+        }
+
+        // Email field handling
+        const emailInput = document.getElementById('prof-email');
+        const emailHint = document.getElementById('hint-prof-email');
+        if (u.email) {
+            emailInput.value = u.email;
+            emailInput.readOnly = Boolean(u.googleId);
+            emailInput.style.background = u.googleId ? '#f9f9f9' : '#ffffff';
+            emailInput.style.color = u.googleId ? '#777' : 'var(--text)';
+            if (emailHint) emailHint.textContent = u.googleId ? '🔒 Linked Google account' : '';
+        } else {
+            emailInput.value = '';
+            emailInput.readOnly = false;
+            emailInput.style.background = '#ffffff';
+            emailInput.style.color = 'var(--text)';
+            if (emailHint) emailHint.textContent = 'Optional email for notifications';
+        }
 
         // Skills setup
         userSkillsList = (u.skills || '')
@@ -1452,10 +1486,23 @@
         const btn = document.getElementById('btn-save-prof');
         const msg = document.getElementById('profile-save-msg');
 
+        const mobileVal = document.getElementById('prof-mobile').value.trim();
+        const emailVal = document.getElementById('prof-email').value.trim();
+
+        if (mobileVal && !/^\d{10}$/.test(mobileVal)) {
+            msg.style.display = 'block';
+            msg.style.background = '#fdecea';
+            msg.style.color = '#e74c3c';
+            msg.textContent = 'Please enter a valid 10-digit mobile number.';
+            return;
+        }
+
         const body = {
-            fullName: document.getElementById('prof-name').value,
-            location: document.getElementById('prof-location').value,
-            bio: document.getElementById('prof-bio').value,
+            fullName: document.getElementById('prof-name').value.trim(),
+            mobile: mobileVal,
+            email: emailVal,
+            location: document.getElementById('prof-location').value.trim(),
+            bio: document.getElementById('prof-bio').value.trim(),
             skills: userSkillsList.join(', ')
         };
 
