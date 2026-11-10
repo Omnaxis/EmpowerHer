@@ -6,7 +6,14 @@ const { query, queryOne } = require('../db/database');
 const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
-const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const googleClient = new OAuth2Client();
+
+// --- Public Auth Configuration (e.g., Google OAuth Client ID) ---
+router.get('/config', (req, res) => {
+  res.json({
+    googleClientId: process.env.GOOGLE_CLIENT_ID || ''
+  });
+});
 
 function generateToken(user) {
   return jwt.sign(
@@ -64,17 +71,23 @@ router.post('/google', async (req, res) => {
     const { credential } = req.body;
     if (!credential) return res.status(400).json({ error: 'Google credential is required.' });
 
-    const ticket = await googleClient.verifyIdToken({ idToken: credential, audience: process.env.GOOGLE_CLIENT_ID });
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    if (!clientId) {
+      return res.status(500).json({ error: 'Google OAuth is not configured on the server. Please add GOOGLE_CLIENT_ID to the environment variables.' });
+    }
+
+    const ticket = await googleClient.verifyIdToken({ idToken: credential, audience: clientId });
     const payload = ticket.getPayload();
     const { sub: googleId, email, name, picture } = payload;
+    const fullName = name || (email ? email.split('@')[0] : 'Homepreneur');
 
     let user = await queryOne('SELECT * FROM users WHERE "googleId" = $1', [googleId]);
-    if (!user) user = await queryOne('SELECT * FROM users WHERE email = $1', [email]);
+    if (!user && email) user = await queryOne('SELECT * FROM users WHERE email = $1', [email]);
 
     if (!user) {
       user = await queryOne(
         `INSERT INTO users ("fullName", email, "googleId", avatar, "profileCompletion") VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-        [name, email, googleId, picture || '', 40]
+        [fullName, email || null, googleId, picture || '', 40]
       );
     } else if (!user.googleId) {
       await query('UPDATE users SET "googleId" = $1, avatar = $2 WHERE id = $3', [googleId, picture || '', user.id]);
@@ -87,7 +100,10 @@ router.post('/google', async (req, res) => {
 
     const token = generateToken(user);
     res.json({ message: 'Google login successful!', token, user: { id: user.id, fullName: user.fullName, email: user.email, avatar: user.avatar, profileCompletion: user.profileCompletion } });
-  } catch (err) { console.error('Google auth error:', err); res.status(401).json({ error: 'Google authentication failed.' }); }
+  } catch (err) {
+    console.error('Google auth error:', err);
+    res.status(401).json({ error: err.message || 'Google authentication failed.' });
+  }
 });
 
 router.get('/me', authenticateToken, async (req, res) => {

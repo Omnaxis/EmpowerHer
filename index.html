@@ -510,21 +510,7 @@
 
             <!-- Google Sign-In Button -->
             <div id="google-signin-container">
-                <div id="g_id_onload"
-                     data-client_id="YOUR_GOOGLE_CLIENT_ID_HERE"
-                     data-context="signin"
-                     data-ux_mode="popup"
-                     data-callback="handleGoogleSignIn"
-                     data-auto_prompt="false">
-                </div>
-                <div class="g_id_signin"
-                     data-type="standard"
-                     data-shape="pill"
-                     data-theme="outline"
-                     data-text="continue_with"
-                     data-size="large"
-                     data-width="320">
-                </div>
+                <div id="g_id_signin_slot"></div>
             </div>
         </form>
     </div>
@@ -682,6 +668,52 @@
             submitBtn.innerHTML = originalText;
         }
     }
+
+    // --- Dynamic Google Sign-In Initialization from Server Env ---
+    async function initGoogleAuth() {
+        try {
+            const res = await fetch(`${API_BASE}/api/auth/config`);
+            if (!res.ok) return;
+            const config = await res.json();
+            const clientId = config.googleClientId;
+            if (!clientId) {
+                console.log('ℹ️ Google Sign-In is disabled (no GOOGLE_CLIENT_ID configured on server).');
+                const container = document.getElementById('google-signin-container');
+                if (container) container.style.display = 'none';
+                return;
+            }
+
+            function renderGoogleButton() {
+                if (window.google && google.accounts && google.accounts.id) {
+                    google.accounts.id.initialize({
+                        client_id: clientId,
+                        callback: handleGoogleSignIn,
+                        auto_select: false
+                    });
+                    const slot = document.getElementById('g_id_signin_slot');
+                    if (slot) {
+                        slot.innerHTML = '';
+                        google.accounts.id.renderButton(slot, {
+                            type: 'standard',
+                            shape: 'pill',
+                            theme: 'outline',
+                            text: 'continue_with',
+                            size: 'large',
+                            width: 320
+                        });
+                    }
+                } else {
+                    setTimeout(renderGoogleButton, 100);
+                }
+            }
+
+            renderGoogleButton();
+        } catch (err) {
+            console.warn('Could not fetch Google OAuth config:', err);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', initGoogleAuth);
 
     // --- Google Sign-In Callback ---
     async function handleGoogleSignIn(response) {
